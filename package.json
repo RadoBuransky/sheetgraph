@@ -1,0 +1,26 @@
+{
+  "name": "d3sheet",
+  "version": "1.0.0",
+  "description": "Visualize Google Spreadsheet as a D3 force graph.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RadoBuransky/d3sheet.git"
+  },
+  "keywords": [
+    "d3",
+    "force",
+    "graph",
+    "google",
+    "spreadsheet"
+  ],
+  "author": "Rado Buranský",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/RadoBuransky/d3sheet/issues"
+  },
+  "homepage": "https://github.com/RadoBuransky/d3sheet#readme"
+}
