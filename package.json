@@ -4,6 +4,10 @@
   "description": "Visualize Google Spreadsheet as a D3 force graph.",
   "main": "d3sheet.js",
   "scripts": {
+    "build-debug": "browserify src/d3sheet.js -d --s d3sheet > d3sheet.js",
+    "build-min": "browserify src/d3sheet.js --s d3sheet | uglifyjs -c > d3sheet.min.js",
+    "build": "npm run build-debug && npm run build-min",
+    "watch": "watchify src/d3sheet.js -d --s d3sheet -o d3sheet.js -v",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
