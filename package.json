@@ -2,7 +2,7 @@
   "name": "d3sheet",
   "version": "1.0.0",
   "description": "Visualize Google Spreadsheet as a D3 force graph.",
-  "main": "index.js",
+  "main": "d3sheet.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,5 +22,10 @@
   "bugs": {
     "url": "https://github.com/RadoBuransky/d3sheet/issues"
   },
-  "homepage": "https://github.com/RadoBuransky/d3sheet#readme"
+  "homepage": "https://github.com/RadoBuransky/d3sheet#readme",
+  "devDependencies": {
+    "browserify": "^12.0.1",
+    "uglify-js": "^2.6.0",
+    "watchify": "^3.6.0"
+  }
 }
