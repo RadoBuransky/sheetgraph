@@ -1,8 +1,8 @@
 # d3sheet
 
-**Visualize Google Spreadsheet as a D3 force graph.**
+## Visualize Google Spreadsheet as a D3 force graph.**
 
-Create Google Spreadsheet with two worksheets like this:
+**Teaser:** Create Google Spreadsheet with two worksheets like this ...
 
 **Movie**
 
@@ -22,6 +22,22 @@ Create Google Spreadsheet with two worksheets like this:
 ... and get visual graph representation like this:
 
 **TODO**
+
+## No need to write any code, just create a spreadsheet and publish it
+
+The minimal required steps are to:
+ 
+1. **Create a well-formed Google Spreadsheet** and
+2. **Publish it so that it can be publicly accessed**. From the main menu in Google Spreadsheet choose **File** >
+   **Publish to the web...**.
+
+Meaning of well-formedness is described later, but it's simple. If you're too lazy to read, go ahead and check examples to
+learn by them.
+
+## Example 1: movies and actors
+
+[Google Spreadsheet](https://docs.google.com/spreadsheets/d/145TdEqd9nbnRFWWGUM-tdedulewUvZjRpHP7C09pIaQ/)
+[Graph](http://radoburansky.github.io/d3sheet/demo/movies-and-actors)
 
 ## Sheet rows are nodes
 
