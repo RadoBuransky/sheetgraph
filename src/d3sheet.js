@@ -3,7 +3,9 @@
 
     var d3sheet = {
         ver: "1.0.0",
-        db: {}
+        db: {},
+        model: {},
+        nodes: []
     };
 
     module.exports = d3sheet;
@@ -43,12 +45,22 @@
     * Load data from spreadsheet.
     **/
     d3sheet.load = function(spreadsheetKey) {
-        var spreadsheet = require("./spreadsheet");
-
         // Load spreadsheet
+        var spreadsheet = require("./spreadsheet");
         spreadsheet(spreadsheetKey, function(spreadsheetData) {
-            // Save data as db
             d3sheet.db = spreadsheetData;
+
+            // Create model from DB
+            var model = require("./model");
+            d3sheet.model = model(d3sheet.db);
+
+            // Create graph from model
+            var graph = require("./graph");
+            d3sheet.graph = graph(model);
+
+            // Create D3 force layout from graph
+            var force = require("./force");
+            force(graph);
         });
     }
 
