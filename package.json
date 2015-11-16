@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Visualize Google Spreadsheet as a D3 force graph.",
   "main": "d3sheet.js",
+  "browserify": "d3sheet.js",
   "scripts": {
     "build-debug": "browserify src/d3sheet.js -d --s d3sheet > d3sheet.js",
     "build-min": "browserify src/d3sheet.js --s d3sheet | uglifyjs -c > d3sheet.min.js",

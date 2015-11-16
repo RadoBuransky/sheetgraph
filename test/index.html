@@ -4,9 +4,14 @@
     <title>browserify module</title>
 </head>
 <body>
-<script src="../d3sheet.min.js"></script>
-<script>
-    console.log(d3sheet())
-  </script>
+    <div id="d3sheet-container"></div>
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.8/d3.min.js"></script>
+    <script src="../d3sheet.js"></script>
+
+    <script>
+        d3sheet.init("d3sheet-container");
+    </script>
 </body>
 </html>
