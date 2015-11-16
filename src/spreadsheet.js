@@ -1,8 +1,7 @@
 module.exports = function(spreadsheetKey, onLoaded) {
-
-    // Get info about the spreadsheet
+    // Get sheet count
     getSheetCount(spreadsheetKey, function onSuccess(sheetCount) {
-                console.log("xx");
+        // Load all sheets
         loadSheets(spreadsheetKey, sheetCount);
     });
 

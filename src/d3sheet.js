@@ -44,12 +44,12 @@
     **/
     d3sheet.load = function(spreadsheetKey) {
         var spreadsheet = require("./spreadsheet");
-        spreadsheet(spreadsheetKey, onDbLoaded);
-    }
 
-    function onDbLoaded(spreadsheetData) {
-        console.log(spreadsheetData);
-        d3sheet.db = spreadsheetData;
+        // Load spreadsheet
+        spreadsheet(spreadsheetKey, function(spreadsheetData) {
+            // Save data as db
+            d3sheet.db = spreadsheetData;
+        });
     }
 
     function checkRequirements() {
