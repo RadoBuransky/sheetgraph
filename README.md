@@ -1,8 +1,6 @@
-# d3sheet
+# d3sheet - Visualize Google Spreadsheet as a D3 force graph
 
-## Visualize Google Spreadsheet as a D3 force graph.**
-
-**Teaser:** Create Google Spreadsheet with two worksheets like this ...
+**Teaser:** Without any code, create Google Spreadsheet with two worksheets like this ...
 
 **Movie**
 
