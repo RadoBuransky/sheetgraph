@@ -2,9 +2,24 @@
 
 **Visualize Google Spreadsheet as a D3 force graph.**
 
-| aaa | bbbb |
-|-----|------|
-|     |      |
+Create Google Spreadsheet with two worksheets like this:
+
+**Movie**
+| Label                    | Actor                                 |
+|--------------------------|---------------------------------------|
+| The Terminator           | Arnold Schwarzenegger, Linda Hamilton |
+| Dante's Peak             | Linda Hamilton                        |
+
+**Actor**
+| Label                 |
+|-----------------------|
+| Arnold Schwarzenegger |
+| Linda Hamilton        |
+| Pierce Brosnan        |
+
+... and get visual graph representation like this:
+
+**TODO**
 
 ## Sheet rows are nodes
 
