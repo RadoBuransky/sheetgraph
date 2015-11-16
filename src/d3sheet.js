@@ -1,10 +1,9 @@
-var init = require("./init");
-
 !function() {
     checkRequirements();
 
     var d3sheet = {
-        ver: "1.0.0"
+        ver: "1.0.0",
+        db: {}
     };
 
     module.exports = d3sheet;
@@ -36,6 +35,21 @@ var init = require("./init");
         // Create info panel
         d3.select("#" + infoContainerId)
             .append("div");
+
+        return d3sheet;
+    }
+
+    /**
+    * Load data from spreadsheet.
+    **/
+    d3sheet.load = function(spreadsheetKey) {
+        var spreadsheet = require("./spreadsheet");
+        spreadsheet(spreadsheetKey, onDbLoaded);
+    }
+
+    function onDbLoaded(spreadsheetData) {
+        console.log(spreadsheetData);
+        d3sheet.db = spreadsheetData;
     }
 
     function checkRequirements() {

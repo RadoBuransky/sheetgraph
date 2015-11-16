@@ -12,7 +12,7 @@
     <div id="d3sheet" class="container-fluid">
         <div class="row">
             <div id="d3sheet-svg" class="col-md-9"></div>
-            <div id="d3sheet-info" class="col-md-3">
+            <div id="d3sheet-info" class="col-md-3"></div>
         </div>
     </div>
 
@@ -23,7 +23,9 @@
     <script src="../d3sheet.js"></script>
 
     <script>
-        d3sheet.init("d3sheet-svg", "d3sheet-info");
+        d3sheet
+            .init("d3sheet-svg", "d3sheet-info")
+            .load("1TAVF5meqnFLqwNlttUj1cLEP4WmLzpO_DWyYCWudctM");
     </script>
 </body>
 </html>
