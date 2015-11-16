@@ -1,6 +1,6 @@
 # d3sheet - Visualize Google Spreadsheet as a D3 force graph
 
-**Teaser:** Without any code, create Google Spreadsheet with two worksheets like this ...
+Without any code, create Google Spreadsheet with two worksheets like this ...
 
 **Movie**
 
@@ -34,8 +34,8 @@ learn by them.
 
 ## Example 1: movies and actors
 
-[Google Spreadsheet](https://docs.google.com/spreadsheets/d/145TdEqd9nbnRFWWGUM-tdedulewUvZjRpHP7C09pIaQ/)
-[Graph](http://radoburansky.github.io/d3sheet/demo/movies-and-actors)
+- [Google Spreadsheet](https://docs.google.com/spreadsheets/d/145TdEqd9nbnRFWWGUM-tdedulewUvZjRpHP7C09pIaQ/)
+- [Graph](http://radoburansky.github.io/d3sheet/demo/movies-and-actors)
 
 ## Sheet rows are nodes
 
