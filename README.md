@@ -5,12 +5,14 @@
 Create Google Spreadsheet with two worksheets like this:
 
 **Movie**
+
 | Label                    | Actor                                 |
 |--------------------------|---------------------------------------|
 | The Terminator           | Arnold Schwarzenegger, Linda Hamilton |
 | Dante's Peak             | Linda Hamilton                        |
 
 **Actor**
+
 | Label                 |
 |-----------------------|
 | Arnold Schwarzenegger |
