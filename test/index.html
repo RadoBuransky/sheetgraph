@@ -1,17 +1,29 @@
 <!doctype html>
 <html>
 <head>
-    <title>browserify module</title>
+    <title>D3Sheet demo</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+    <link rel="stylesheet" href="index.css">
+
 </head>
 <body>
-    <div id="d3sheet-container"></div>
+    <div id="d3sheet" class="container-fluid">
+        <div class="row">
+            <div id="d3sheet-svg" class="col-md-9"></div>
+            <div id="d3sheet-info" class="col-md-3">
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.8/d3.min.js"></script>
+
     <script src="../d3sheet.js"></script>
 
     <script>
-        d3sheet.init("d3sheet-container");
+        d3sheet.init("d3sheet-svg", "d3sheet-info");
     </script>
 </body>
 </html>

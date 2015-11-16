@@ -9,18 +9,33 @@ var init = require("./init");
 
     module.exports = d3sheet;
 
-    // Initialize D3 sheet
-    d3sheet.init = function(containerId) {
-        if (containerId == null) {
-            // Use default
-            d3sheet.containerId = "d3sheet-container";
-        }
-        else {
-            d3sheet.containerId = containerId;
-        }
+    /**
+    * Initialize D3 sheet.
+    * @param {string} containerId - identifier of the main DIV.
+    **/
+    d3sheet.init = function(svgContainerId, infoContainerId) {
+        if (svgContainerId == null)
+            svgContainerId = "d3sheet-svg";
+        d3sheet.svgContainerId = svgContainerId;
 
-        d3.select("#d3sheet-container")
-            .append("svg:svg");
+        if (infoContainerId == null)
+            infoContainerId = "d3sheet-info";
+        d3sheet.infoContainerId = infoContainerId;
+
+        var $svgContainerId = $("#" + svgContainerId),
+            width = $svgContainerId.width(),
+            height = $svgContainerId.height();
+
+        // Create SVG element
+        d3.select("#" + svgContainerId)
+            .append("svg")
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr('viewBox', "0 0 " + width + " " + height);
+
+        // Create info panel
+        d3.select("#" + infoContainerId)
+            .append("div");
     }
 
     function checkRequirements() {

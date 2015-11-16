@@ -1,0 +1,22 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#d3sheet {
+    width: 100%;
+    height: 100%;
+}
+
+#d3sheet .row {
+    height: 100%;
+}
+
+#d3sheet-svg {
+    height: 100%;
+    padding: 0;
+    background-color: black;
+}
