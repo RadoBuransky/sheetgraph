@@ -1,49 +1,64 @@
 module.exports = function(db) {
-    var model = {};
+    var model = {
+        graph: {},
+        settings: {}
+    };
 
-    var linkSheets = separateNodeAndLinkSheets(db, model);
-    linkSheetsToModel(linkSheets, model);
+    var sheetTypes = getSheetTypes(db);
+    model.graph = getNodeSheets(db, sheetTypes.nodesSheetNames);
+    if (sheetTypes.settingsSheetName != null)
+        model.settings = db[sheetTypes.settingsSheetName];
 
-    console.log(linkSheets);
     console.log(model);
 
-    function linkSheetsToModel(linkSheets, model) {
-        $.each(linkSheets, function(i, linkSheet) {
-            var references = {};
-            $.each(linkSheet.data, function(j, ref) {
-                references[ref[linkSheet.source + "Id"]] = ref[linkSheet.target + "Id"];
-            });
-
-            model[linkSheet.source].references[linkSheet.target] = references;
+    function getNodeSheets(db, nodesSheetNames) {
+        var nodes = {};
+        $.each(nodesSheetNames, function(i, nodesSheetName) {
+            nodes[nodesSheetName] = db[nodesSheetName];
         });
+        return nodes;
     }
 
-    function separateNodeAndLinkSheets(db, model) {
-        var linkSheets = {};
+    function getSheetTypes(db) {
+        var sheetTypes = {
+            nodesSheetNames: [],
+            linkSheetNames: [],
+            settingsSheetName: null
+        };
         var sheetNames = Object.keys(db);
         $.each(sheetNames, function(i, sheetName) {
-            // Link sheets have dash-separated name in form <SOURCE_NAME>-<TARGET_NAME>
-            var nodeNames = sheetName.split("-");
-            if ((nodeNames.length == 2) &&
-                (sheetNames.indexOf(nodeNames[0]) > -1) &&
-                (sheetNames.indexOf(nodeNames[1]) > -1)) {
-                // This is a link sheet
-                linkSheets[sheetName] = {
-                    source: nodeNames[0],
-                    target: nodeNames[1],
-                    data: db[sheetName]
-                }
+            if (sheetName == "settings") {
+                sheetTypes.settingsSheetName = sheetName;
+                return;
             }
-            else {
-                // This is a node sheet
-                model[sheetName] = {
-                    records: db[sheetName],
-                    references: {}
-                }
+
+            if (sheetName.slice(0, 1) == "#")
+                return;
+
+            var linkSheet = parseLinkSheetName(sheetName)
+            if ((linkSheet != null) &&
+                (sheetNames.indexOf(linkSheet.source) > -1) &&
+                (sheetNames.indexOf(linkSheet.target) > -1)) {
+                sheetTypes.linkSheetNames.push(sheetName)
+                return;
             }
+
+            sheetTypes.nodesSheetNames.push(sheetName);
         });
 
-        return linkSheets;
+        return sheetTypes;
+    }
+
+    function parseLinkSheetName(sheetName) {
+        var nodeNames = sheetName.split("-");
+        if (nodeNames.length == 2) {
+            return {
+                source: nodeNames[0],
+                target: nodeNames[1]
+            };
+        }
+
+        return null;
     }
 
     return model;

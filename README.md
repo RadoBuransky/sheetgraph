@@ -29,7 +29,7 @@ Every sheet has a name and the name matters. There are four types of sheets dete
 
 1. **Node sheet** - contains nodes
 2. **Link sheet** - contains links
-3. **Graph sheet** - a sheet named `graph`, contains various global properties and settings
+3. **Settings sheet** - a sheet named `settings`, contains various global properties and settings
 4. **Ignored sheet** - a sheet is ignored by `d3sheet` if its name starts with a `#` sign
 
 The logic is fairly simple. If the sheet name is in form `<SHEET_NAME>-<SHEET_NAME>` then it contains links, otherwise
@@ -67,9 +67,9 @@ column** is link source and **the second column** is link target.
 **The optional third column** is used as link label if exists. You can also add more columns to store **other link
 properties**.
 
-### Graph sheet
+### Settings sheet
 
-This optional sheet must be named `graph` and contains two columns where the first column contains setting key and
+This optional sheet must be named `settings` and contains two columns where the first column contains setting key and
 the second column contains setting value. List of available settings follows.
 
 | Setting key           | Description                                                                                |
@@ -80,7 +80,7 @@ the second column contains setting value. List of available settings follows.
 
 ### Style
 
-Most of the styling can be changed in the graph sheet with the exception of some node and link styles which can be
+Most of the styling can be changed in the settings sheet with the exception of some node and link styles which can be
 set directly within node and link sheets.
  
 #### Node fill and text colors
