@@ -25,11 +25,12 @@ learn how to create sheets to create nodes in the graph and how to create links 
 To make it clear, sheet is a table. It contains rows and columns. A single spreadsheet can have more sheets. So
 spreadsheet is document and sheet is table. Right?
 
-Every sheet has a name and the name matters. There are three types of sheets determined by their name:
+Every sheet has a name and the name matters. There are four types of sheets determined by their name:
 
 1. **Node sheet** - contains nodes
 2. **Link sheet** - contains links
-3. **Settings sheet** - contains various visualization settings
+3. **Graph sheet** - a sheet named `graph`, contains various global properties and settings
+4. **Ignored sheet** - a sheet is ignored by `d3sheet` if its name starts with a `#` sign
 
 The logic is fairly simple. If the sheet name is in form `<SHEET_NAME>-<SHEET_NAME>` then it contains links, otherwise
 it contains nodes. Links can be also created in a simpler way, you don't always have to create a separate sheet to
@@ -66,19 +67,20 @@ column** is link source and **the second column** is link target.
 **The optional third column** is used as link label if exists. You can also add more columns to store **other link
 properties**.
 
-### Settings sheet
+### Graph sheet
 
-This optional sheet must be named `settings` and contains two columns where the first column contains setting key and
+This optional sheet must be named `graph` and contains two columns where the first column contains setting key and
 the second column contains setting value. List of available settings follows.
 
 | Setting key           | Description                                                                                |
 |-----------------------|--------------------------------------------------------------------------------------------|
+| title                 | Main title. By default it's the name of spreadsheet.                                       |
 | background-color      | CSS color used to paint background, for example #A011FF                                    |
 | color                 | CSS color used for text in general                                                         |
 
 ### Style
 
-Most of the styling can be changed in the settings sheet with the exception of some node and link styles which can be
+Most of the styling can be changed in the graph sheet with the exception of some node and link styles which can be
 set directly within node and link sheets.
  
 #### Node fill and text colors
