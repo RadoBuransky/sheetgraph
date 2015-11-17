@@ -1,31 +1,53 @@
-module.exports = function(db) {
+module.exports = function(spreadsheet) {
     var model = {
         graph: {},
         settings: {}
     };
 
-    var sheetTypes = getSheetTypes(db);
-    model.graph = getNodeSheets(db, sheetTypes.nodesSheetNames);
+    var sheetTypes = getSheetTypes(spreadsheet);
+    model.graph = getGraph(spreadsheet, sheetTypes.nodesSheetNames);
     if (sheetTypes.settingsSheetName != null)
-        model.settings = db[sheetTypes.settingsSheetName];
+        model.settings = spreadsheet[sheetTypes.settingsSheetName];
 
     console.log(model);
 
-    function getNodeSheets(db, nodesSheetNames) {
-        var nodes = {};
+    function getGraph(spreadsheet, nodesSheetNames) {
+        var graph = {};
         $.each(nodesSheetNames, function(i, nodesSheetName) {
-            nodes[nodesSheetName] = db[nodesSheetName];
+            graph[nodesSheetName] = getNodes(spreadsheet[nodesSheetName]);
         });
-        return nodes;
+
+        function getNodes(nodeSheet) {
+            var result = {
+                label: nodeSheet.header[0].text,
+                nodes: []
+            };
+            $.each(nodeSheet.rows, function(i, row) {
+                result.nodes.push(getNodeProperties(row));
+            });
+            return result;
+        }
+
+        function getNodeProperties(row) {
+            var nodeProperties = {};
+            var colNames = Object.keys(row);
+            $.each(colNames, function(i, colName) {
+                if (colName.indexOf(".") == -1)
+                    nodeProperties[colName] = row[colName];
+            });
+            return nodeProperties;
+        }
+
+        return graph;
     }
 
-    function getSheetTypes(db) {
+    function getSheetTypes(spreadsheet) {
         var sheetTypes = {
             nodesSheetNames: [],
             linkSheetNames: [],
             settingsSheetName: null
         };
-        var sheetNames = Object.keys(db);
+        var sheetNames = Object.keys(spreadsheet);
         $.each(sheetNames, function(i, sheetName) {
             if (sheetName == "settings") {
                 sheetTypes.settingsSheetName = sheetName;

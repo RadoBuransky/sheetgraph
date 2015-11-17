@@ -20,19 +20,23 @@ module.exports = function(spreadsheetKey, onLoaded) {
 
     function loadSheet(spreadsheet, spreadsheetKey, sheetIndex) {
         return getSheet(spreadsheetKey, sheetIndex, function(response) {
-            var COLUMN_INDEX_NAME = [];
-            var data = spreadsheet[response.feed.title.$t] = [];
+            var sheet = spreadsheet[response.feed.title.$t] = {
+                header: [],
+                rows: [],
+            };
 
             $.each(response.feed.entry, function(i, e) {
                 if (e.gs$cell.row == 1) {
-                    COLUMN_INDEX_NAME[e.gs$cell.col] = e.content.$t;
+                    sheet.header[e.gs$cell.col - 1] = {
+                        text: e.content.$t
+                    };
                 }
                 else {
                     var index = e.gs$cell.row - 2;
-                    if (data[index] == null) {
-                        data[index] = {};
+                    if (sheet.rows[index] == null) {
+                        sheet.rows[index] = {};
                     }
-                    data[index][COLUMN_INDEX_NAME[e.gs$cell.col]] = e.content.$t;
+                    sheet.rows[index][sheet.header[e.gs$cell.col - 1].text] = e.content.$t;
                 }
             });
         });
