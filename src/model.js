@@ -18,6 +18,11 @@ module.exports = function(spreadsheet) {
             graph[nodeSheetName] = getNodes(spreadsheet[nodeSheetName]);
         });
 
+        // Create link names
+        $.each(nodeSheetNames, function(i, nodeSheetName) {
+            createLinkNames(graph, spreadsheet[nodeSheetName], nodeSheetName);
+        });
+
         // Create links from node sheets
         $.each(nodeSheetNames, function(i, nodeSheetName) {
             createLinks(graph, spreadsheet[nodeSheetName], nodeSheetName);
@@ -52,6 +57,17 @@ module.exports = function(spreadsheet) {
             });
         }
 
+        function createLinkNames(graph, nodeSheet, nodeSheetName) {
+            var source = graph[nodeSheetName];
+
+            // Get link names
+            $.each(nodeSheet.header, function(i, propertyName) {
+                var linkTarget = parseColumnLinkName(propertyName, graph);
+                if (linkTarget != null)
+                    source.linkNames.push(linkTarget.sheetName);
+            });
+        }
+
         function getNodes(nodeSheet) {
             var result = {
                 label: nodeSheet.header[0],
@@ -65,13 +81,11 @@ module.exports = function(spreadsheet) {
                 result.nodes.push(getNodeProperties(row));
             });
 
-            // Get property names and link names
-            $.each(nodeSheet.header, function(i, propertyName) {
-                var linkTarget = parseColumnLinkName(propertyName, graph);
-                if (linkTarget == null)
-                    result.propertyNames.push(propertyName);
-                else
-                    result.linkNames.push(linkTarget.sheetName);
+            // Get property names
+            $.each(nodeSheet.header, function(i, colName) {
+                var linkTarget = colName.split(".");
+                if (linkTarget.length == 1)
+                    result.propertyNames.push(colName);
             });
 
             return result;
