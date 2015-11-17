@@ -11,20 +11,69 @@ module.exports = function(spreadsheet) {
 
     console.log(model);
 
-    function getGraph(spreadsheet, nodesSheetNames) {
+    function getGraph(spreadsheet, nodeSheetNames) {
+        // Create nodes with properties
         var graph = {};
-        $.each(nodesSheetNames, function(i, nodesSheetName) {
-            graph[nodesSheetName] = getNodes(spreadsheet[nodesSheetName]);
+        $.each(nodeSheetNames, function(i, nodeSheetName) {
+            graph[nodeSheetName] = getNodes(spreadsheet[nodeSheetName]);
         });
+
+        // Create links from node sheets
+        $.each(nodeSheetNames, function(i, nodeSheetName) {
+            createLinks(graph, spreadsheet[nodeSheetName], nodeSheetName);
+        });
+
+        // TODO: Create links from link sheets
+
+        function createLinks(graph, nodeSheet, nodeSheetName) {
+            var source = graph[nodeSheetName];
+
+            // For all sheet rows
+            $.each(nodeSheet.rows, function(i, row) {
+                // For all sheet columns
+                var colNames = Object.keys(row);
+                $.each(colNames, function(j, colName) {
+                    // If this is a link column
+                    var linkTarget = parseColumnLinkName(colName, graph);
+                    if (linkTarget != null) {
+                        // Find index of the target node
+                        $.each(graph[linkTarget.sheetName].nodes, function(k, targetNode) {
+                            // If target node property value matches
+                            if (row[colName].indexOf(targetNode[linkTarget.propertyName]) > -1) {
+                                if (source.nodes[i][linkTarget.sheetName] == null)
+                                    source.nodes[i][linkTarget.sheetName] = [];
+
+                                // Add index of the target node to the source node
+                                source.nodes[i][linkTarget.sheetName].push(k);
+                            }
+                        });
+                    }
+                });
+            });
+        }
 
         function getNodes(nodeSheet) {
             var result = {
-                label: nodeSheet.header[0].text,
+                label: nodeSheet.header[0],
+                propertyNames: [],
+                linkNames: [],
                 nodes: []
             };
+
+            // Get nodes and properties
             $.each(nodeSheet.rows, function(i, row) {
                 result.nodes.push(getNodeProperties(row));
             });
+
+            // Get property names and link names
+            $.each(nodeSheet.header, function(i, propertyName) {
+                var linkTarget = parseColumnLinkName(propertyName, graph);
+                if (linkTarget == null)
+                    result.propertyNames.push(propertyName);
+                else
+                    result.linkNames.push(linkTarget.sheetName);
+            });
+
             return result;
         }
 
@@ -69,6 +118,20 @@ module.exports = function(spreadsheet) {
         });
 
         return sheetTypes;
+    }
+
+    function parseColumnLinkName(colName, graph) {
+        var linkNames = colName.split(".");
+        if ((linkNames.length == 2) &&
+            (graph[linkNames[0]] != null) &&
+            (graph[linkNames[0]].propertyNames.indexOf(linkNames[1]) > -1)) {
+            return {
+                sheetName: linkNames[0],
+                propertyName: linkNames[1]
+            }
+        }
+
+        return null;
     }
 
     function parseLinkSheetName(sheetName) {

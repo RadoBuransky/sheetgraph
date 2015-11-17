@@ -27,16 +27,14 @@ module.exports = function(spreadsheetKey, onLoaded) {
 
             $.each(response.feed.entry, function(i, e) {
                 if (e.gs$cell.row == 1) {
-                    sheet.header[e.gs$cell.col - 1] = {
-                        text: e.content.$t
-                    };
+                    sheet.header[e.gs$cell.col - 1] = e.content.$t;
                 }
                 else {
                     var index = e.gs$cell.row - 2;
                     if (sheet.rows[index] == null) {
                         sheet.rows[index] = {};
                     }
-                    sheet.rows[index][sheet.header[e.gs$cell.col - 1].text] = e.content.$t;
+                    sheet.rows[index][sheet.header[e.gs$cell.col - 1]] = e.content.$t;
                 }
             });
         });
