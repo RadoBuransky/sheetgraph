@@ -4,5 +4,7 @@ module.exports = function(model) {
         links: []
     }
 
+    graph.nodes.push({});
+
     return graph;
 }

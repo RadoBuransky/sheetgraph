@@ -3,9 +3,11 @@
 
     var d3sheet = {
         ver: "1.0.0",
-        db: {},
-        model: {},
-        nodes: []
+        svgContainerId: "",
+        infoContainerId: "",
+        svg: {},
+        spreadsheet: {},
+        model: {}
     };
 
     module.exports = d3sheet;
@@ -23,12 +25,12 @@
             infoContainerId = "d3sheet-info";
         d3sheet.infoContainerId = infoContainerId;
 
-        var $svgContainerId = $("#" + svgContainerId),
-            width = $svgContainerId.width(),
-            height = $svgContainerId.height();
+        var svgContainer = $("#" + svgContainerId),
+            width = svgContainer.width(),
+            height = svgContainer.height();
 
         // Create SVG element
-        d3.select("#" + svgContainerId)
+        d3sheet.svg = d3.select("#" + svgContainerId)
             .append("svg")
             .attr("width", "100%")
             .attr("height", "100%")
@@ -48,11 +50,11 @@
         // Load spreadsheet
         var spreadsheet = require("./spreadsheet");
         spreadsheet(spreadsheetKey, function(spreadsheetData) {
-            d3sheet.db = spreadsheetData;
+            d3sheet.spreadsheet = spreadsheetData;
 
-            // Create model from DB
+            // Create model from spreadsheet
             var model = require("./model");
-            d3sheet.model = model(d3sheet.db);
+            d3sheet.model = model(d3sheet.spreadsheet);
 
             // Create graph from model
             var graph = require("./graph");
@@ -60,7 +62,7 @@
 
             // Create D3 force layout from graph
             var force = require("./force");
-            force(graph);
+            force(d3sheet.graph, d3sheet.svgContainerId, d3sheet.svg);
         });
     }
 
