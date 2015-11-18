@@ -58,7 +58,7 @@
 
             // Create graph from model
             var graph = require("./graph");
-            d3sheet.graph = graph(model);
+            d3sheet.graph = graph(d3sheet.model);
 
             // Create D3 force layout from graph
             var force = require("./force");

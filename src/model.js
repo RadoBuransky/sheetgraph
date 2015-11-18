@@ -1,37 +1,35 @@
 module.exports = function(spreadsheet) {
     var model = {
-        graph: {},
+        sheets: {},
         settings: {}
     };
 
     var sheetTypes = getSheetTypes(spreadsheet);
-    model.graph = getGraph(spreadsheet, sheetTypes.nodesSheetNames);
+    model.sheets = getGraph(spreadsheet, sheetTypes.nodesSheetNames);
     if (sheetTypes.settingsSheetName != null)
         model.settings = spreadsheet[sheetTypes.settingsSheetName];
 
-    console.log(model);
-
     function getGraph(spreadsheet, nodeSheetNames) {
         // Create nodes with properties
-        var graph = {};
+        var sheets = {};
         $.each(nodeSheetNames, function(i, nodeSheetName) {
-            graph[nodeSheetName] = getNodes(spreadsheet[nodeSheetName]);
+            sheets[nodeSheetName] = getNodes(spreadsheet[nodeSheetName]);
         });
 
         // Create link names
         $.each(nodeSheetNames, function(i, nodeSheetName) {
-            createLinkNames(graph, spreadsheet[nodeSheetName], nodeSheetName);
+            createLinkNames(sheets, spreadsheet[nodeSheetName], nodeSheetName);
         });
 
         // Create links from node sheets
         $.each(nodeSheetNames, function(i, nodeSheetName) {
-            createLinks(graph, spreadsheet[nodeSheetName], nodeSheetName);
+            createLinks(sheets, spreadsheet[nodeSheetName], nodeSheetName);
         });
 
         // TODO: Create links from link sheets
 
-        function createLinks(graph, nodeSheet, nodeSheetName) {
-            var source = graph[nodeSheetName];
+        function createLinks(sheets, nodeSheet, nodeSheetName) {
+            var source = sheets[nodeSheetName];
 
             // For all sheet rows
             $.each(nodeSheet.rows, function(i, row) {
@@ -39,10 +37,10 @@ module.exports = function(spreadsheet) {
                 var colNames = Object.keys(row);
                 $.each(colNames, function(j, colName) {
                     // If this is a link column
-                    var linkTarget = parseColumnLinkName(colName, graph);
+                    var linkTarget = parseColumnLinkName(colName, sheets);
                     if (linkTarget != null) {
                         // Find index of the target node
-                        $.each(graph[linkTarget.sheetName].nodes, function(k, targetNode) {
+                        $.each(sheets[linkTarget.sheetName].nodes, function(k, targetNode) {
                             // If target node property value matches
                             if (row[colName].indexOf(targetNode[linkTarget.propertyName]) > -1) {
                                 if (source.nodes[i][linkTarget.sheetName] == null)
@@ -57,12 +55,12 @@ module.exports = function(spreadsheet) {
             });
         }
 
-        function createLinkNames(graph, nodeSheet, nodeSheetName) {
-            var source = graph[nodeSheetName];
+        function createLinkNames(sheets, nodeSheet, nodeSheetName) {
+            var source = sheets[nodeSheetName];
 
             // Get link names
             $.each(nodeSheet.header, function(i, propertyName) {
-                var linkTarget = parseColumnLinkName(propertyName, graph);
+                var linkTarget = parseColumnLinkName(propertyName, sheets);
                 if (linkTarget != null)
                     source.linkNames.push(linkTarget.sheetName);
             });
@@ -101,7 +99,7 @@ module.exports = function(spreadsheet) {
             return nodeProperties;
         }
 
-        return graph;
+        return sheets;
     }
 
     function getSheetTypes(spreadsheet) {
@@ -134,11 +132,11 @@ module.exports = function(spreadsheet) {
         return sheetTypes;
     }
 
-    function parseColumnLinkName(colName, graph) {
+    function parseColumnLinkName(colName, sheets) {
         var linkNames = colName.split(".");
         if ((linkNames.length == 2) &&
-            (graph[linkNames[0]] != null) &&
-            (graph[linkNames[0]].propertyNames.indexOf(linkNames[1]) > -1)) {
+            (sheets[linkNames[0]] != null) &&
+            (sheets[linkNames[0]].propertyNames.indexOf(linkNames[1]) > -1)) {
             return {
                 sheetName: linkNames[0],
                 propertyName: linkNames[1]

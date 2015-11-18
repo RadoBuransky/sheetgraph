@@ -47,7 +47,7 @@ module.exports = function(graph, svgContainerId, svg) {
 //            });
 
         var circle = node.append("circle")
-            .attr("r", 50); // TODO: Settings
+            .attr("r", 30); // TODO: Settings
 
 //        node.append("text")
 //            .attr("dy", ".35em")
