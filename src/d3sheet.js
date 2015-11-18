@@ -54,19 +54,22 @@
 
             // Initialize document
             document.title = spreadsheet.title;
-            $("#" + d3sheet.infoContainerId + " h1").text(spreadsheet.title);
+
+            // Initialize info section
+            var infoModule = require("./info");
+            var info = infoModule(d3sheet.infoContainerId, spreadsheet.title);
 
             // Create model from spreadsheet
-            var model = require("./model");
-            d3sheet.model = model(d3sheet.spreadsheet);
+            var modelModule = require("./model");
+            d3sheet.model = modelModule(d3sheet.spreadsheet);
 
             // Create graph from model
-            var graph = require("./graph");
-            d3sheet.graph = graph(d3sheet.model);
+            var graphModule = require("./graph");
+            d3sheet.graph = graphModule(d3sheet.model);
 
             // Create D3 force layout from graph
-            var force = require("./force");
-            force(d3sheet.graph, d3sheet.svgContainerId, d3sheet.svg);
+            var forceModule = require("./force");
+            forceModule(d3sheet.graph, d3sheet.svgContainerId, d3sheet.svg, info);
         });
     }
 

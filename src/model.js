@@ -42,12 +42,12 @@ module.exports = function(spreadsheet) {
                         // Find index of the target node
                         $.each(sheets[linkTarget.sheetName].nodes, function(k, targetNode) {
                             // If target node property value matches
-                            if (row[colName].indexOf(targetNode[linkTarget.propertyName]) > -1) {
-                                if (source.nodes[i][linkTarget.sheetName] == null)
-                                    source.nodes[i][linkTarget.sheetName] = [];
+                            if (row[colName].indexOf(targetNode.properties[linkTarget.propertyName]) > -1) {
+                                if (source.nodes[i].links[linkTarget.sheetName] == null)
+                                    source.nodes[i].links[linkTarget.sheetName] = [];
 
                                 // Add index of the target node to the source node
-                                source.nodes[i][linkTarget.sheetName].push(k);
+                                source.nodes[i].links[linkTarget.sheetName].push(k);
                             }
                         });
                     }
@@ -77,7 +77,10 @@ module.exports = function(spreadsheet) {
 
             // Get nodes and properties
             $.each(nodeSheet.rows, function(i, row) {
-                result.nodes.push(getNodeProperties(row));
+                result.nodes.push({
+                    properties: getNodeProperties(row),
+                    links: []
+                });
             });
 
             // Get property names

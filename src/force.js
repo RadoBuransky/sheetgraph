@@ -1,4 +1,4 @@
-module.exports = function(graph, svgContainerId, svg) {
+module.exports = function(graph, svgContainerId, svg, info) {
     var node = [],
         nodeLabel = [],
         link = [],
@@ -45,11 +45,8 @@ module.exports = function(graph, svgContainerId, svg) {
             .attr("x", 0)
             .attr("y", 0)
             .attr("fill", function(n) { return colors(n.sheetName); })
-            .call(force.drag);
-//            .on("click", function(node) {
-//                modelController.showInfo(node, model);
-//                view.selectNode(node);
-//            });
+            .call(force.drag)
+            .on("click", nodeClick);
 
         svg.selectAll(".node-label")
             .data(graph.nodes)
@@ -59,10 +56,15 @@ module.exports = function(graph, svgContainerId, svg) {
             .attr("dy", ".35em")
             .attr("text-anchor", "middle")
             .text(function(n) { return n.label; })
-            .call(force.drag);;
+            .call(force.drag)
+            .on("click", nodeClick);
 
         selectAll();
         force.start();
+    }
+
+    function nodeClick(node) {
+        info.showNode(node);
     }
 
     function selectAll() {
