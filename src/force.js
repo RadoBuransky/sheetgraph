@@ -64,7 +64,7 @@ module.exports = function(graph, svgContainerId, svg, info) {
     }
 
     function nodeClick(node) {
-        info.showNode(node, nodeFillColor(node));
+        info.showNode(node, graph.nodes, nodeFillColor(node));
     }
 
     function nodeFillColor(node) {

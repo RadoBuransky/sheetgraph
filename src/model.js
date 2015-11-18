@@ -79,7 +79,7 @@ module.exports = function(spreadsheet) {
             $.each(nodeSheet.rows, function(i, row) {
                 result.nodes.push({
                     properties: getNodeProperties(row),
-                    links: []
+                    links: {}
                 });
             });
 

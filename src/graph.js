@@ -22,13 +22,18 @@ module.exports = function(model) {
             // For all link names
             $.each(sheet.linkNames, function(k, linkName) {
                 // For all target nodes
+                var graphTargetIndexes = [];
                 $.each(node.links[linkName], function(l, targetIndex) {
                     var link = {
                         source: node.graphIndex,
                         target: model.sheets[linkName].nodes[targetIndex].graphIndex
                     };
+                    graphTargetIndexes.push(link.target);
                     graph.links.push(link);
                 });
+
+                // Replace model indexes with graph indexes
+                node.links[linkName] = graphTargetIndexes;
             });
         });
     });
