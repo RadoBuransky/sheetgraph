@@ -10,7 +10,8 @@ module.exports = function(model) {
         $.each(sheet.nodes, function(j, node) {
             // Add node to graph
             node.graphIndex = graph.nodes.push(node) - 1;
-            node.label = node.properties[sheet.label];
+            node.labelProperty = sheet.label;
+            node.label = node.properties[node.labelProperty];
             node.sheetName = sheet.name;
         });
     });
