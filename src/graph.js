@@ -10,6 +10,7 @@ module.exports = function(model) {
         $.each(sheet.nodes, function(j, node) {
             // Add node to graph
             node.graphIndex = graph.nodes.push(node) - 1;
+            node.label = node[sheet.label];
         });
     });
 
@@ -23,7 +24,7 @@ module.exports = function(model) {
                 $.each(node[linkName], function(l, targetIndex) {
                     var link = {
                         source: node.graphIndex,
-                        target: targetIndex
+                        target: model.sheets[linkName].nodes[targetIndex].graphIndex
                     };
                     graph.links.push(link);
                 });

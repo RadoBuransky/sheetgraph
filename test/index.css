@@ -21,10 +21,15 @@ html, body {
 }
 
 .node {
-    stroke: black;
+    stroke: gray;
     fill: white;
 }
 
-.link {
+.node text {
     stroke: black;
+    fill: black;
+}
+
+.link {
+    stroke: gray;
 }
