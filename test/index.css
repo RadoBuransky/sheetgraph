@@ -25,6 +25,28 @@ html, body {
     background-color: #EEEEEE;
 }
 
+#d3sheet-node-info h2 {
+    margin-top: 0;
+}
+
+#d3sheet-node-info header {
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+#d3sheet-node-properties {
+    padding-left: 0;
+    list-style: none;
+}
+
+#d3sheet-node-properties li {
+    margin-bottom: 10px;
+}
+
+.d3sheet-node-property-name {
+    font-weight: 800;
+}
+
 .node {
     stroke: gray;
     cursor: pointer;

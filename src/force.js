@@ -44,7 +44,7 @@ module.exports = function(graph, svgContainerId, svg, info) {
             .attr("r", 30) // TODO: Settings
             .attr("x", 0)
             .attr("y", 0)
-            .attr("fill", function(n) { return colors(n.sheetName); })
+            .attr("fill", nodeFillColor)
             .call(force.drag)
             .on("click", nodeClick);
 
@@ -64,7 +64,11 @@ module.exports = function(graph, svgContainerId, svg, info) {
     }
 
     function nodeClick(node) {
-        info.showNode(node);
+        info.showNode(node, nodeFillColor(node));
+    }
+
+    function nodeFillColor(node) {
+        return colors(node.sheetName);
     }
 
     function selectAll() {
