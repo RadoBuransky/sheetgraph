@@ -49,8 +49,12 @@
     d3sheet.load = function(spreadsheetKey) {
         // Load spreadsheet
         var spreadsheet = require("./spreadsheet");
-        spreadsheet(spreadsheetKey, function(spreadsheetData) {
-            d3sheet.spreadsheet = spreadsheetData;
+        spreadsheet(spreadsheetKey, function(spreadsheet) {
+            d3sheet.spreadsheet = spreadsheet;
+
+            // Initialize document
+            document.title = spreadsheet.title;
+            $("#" + d3sheet.infoContainerId + " h1").text(spreadsheet.title);
 
             // Create model from spreadsheet
             var model = require("./model");

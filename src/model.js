@@ -7,23 +7,23 @@ module.exports = function(spreadsheet) {
     var sheetTypes = getSheetTypes(spreadsheet);
     model.sheets = getGraph(spreadsheet, sheetTypes.nodesSheetNames);
     if (sheetTypes.settingsSheetName != null)
-        model.settings = spreadsheet[sheetTypes.settingsSheetName];
+        model.settings = spreadsheet.sheets[sheetTypes.settingsSheetName];
 
     function getGraph(spreadsheet, nodeSheetNames) {
         // Create nodes with properties
         var sheets = {};
         $.each(nodeSheetNames, function(i, nodeSheetName) {
-            sheets[nodeSheetName] = getNodes(spreadsheet[nodeSheetName], nodeSheetName);
+            sheets[nodeSheetName] = getNodes(spreadsheet.sheets[nodeSheetName], nodeSheetName);
         });
 
         // Create link names
         $.each(nodeSheetNames, function(i, nodeSheetName) {
-            createLinkNames(sheets, spreadsheet[nodeSheetName], nodeSheetName);
+            createLinkNames(sheets, spreadsheet.sheets[nodeSheetName], nodeSheetName);
         });
 
         // Create links from node sheets
         $.each(nodeSheetNames, function(i, nodeSheetName) {
-            createLinks(sheets, spreadsheet[nodeSheetName], nodeSheetName);
+            createLinks(sheets, spreadsheet.sheets[nodeSheetName], nodeSheetName);
         });
 
         // TODO: Create links from link sheets
@@ -109,7 +109,7 @@ module.exports = function(spreadsheet) {
             linkSheetNames: [],
             settingsSheetName: null
         };
-        var sheetNames = Object.keys(spreadsheet);
+        var sheetNames = Object.keys(spreadsheet.sheets);
         $.each(sheetNames, function(i, sheetName) {
             if (sheetName == "settings") {
                 sheetTypes.settingsSheetName = sheetName;

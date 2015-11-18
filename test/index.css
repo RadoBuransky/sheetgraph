@@ -20,6 +20,11 @@ html, body {
     padding: 0;
 }
 
+#d3sheet-info {
+    height: 100%;
+    background-color: #EEEEEE;
+}
+
 .node {
     stroke: gray;
     cursor: pointer;

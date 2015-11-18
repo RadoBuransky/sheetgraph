@@ -1,17 +1,20 @@
 module.exports = function(spreadsheetKey, onLoaded) {
     // Get sheet count
-    getSheetCount(spreadsheetKey, function onSuccess(sheetCount) {
+    getSpreadsheetInfo(spreadsheetKey, function onSuccess(info) {
         // Load all sheets
-        loadSheets(spreadsheetKey, sheetCount);
+        loadSheets(spreadsheetKey, info);
     });
 
-    function loadSheets(spreadsheetKey, sheetCount) {
-        var spreadsheet = {};
+    function loadSheets(spreadsheetKey, info) {
+        var spreadsheet = {
+            title: info.title,
+            sheets: {}
+        };
         var loadedSheetCount = 0;
-        for (i = 1; i <= sheetCount; i++) {
+        for (i = 1; i <= info.sheetCount; i++) {
             loadSheet(spreadsheet, spreadsheetKey, i).then(function() {
                 loadedSheetCount += 1;
-                if (loadedSheetCount == sheetCount) {
+                if (loadedSheetCount == info.sheetCount) {
                     onLoaded(spreadsheet);
                 }
             })
@@ -20,7 +23,7 @@ module.exports = function(spreadsheetKey, onLoaded) {
 
     function loadSheet(spreadsheet, spreadsheetKey, sheetIndex) {
         return getSheet(spreadsheetKey, sheetIndex, function(response) {
-            var sheet = spreadsheet[response.feed.title.$t] = {
+            var sheet = spreadsheet.sheets[response.feed.title.$t] = {
                 header: [],
                 rows: [],
             };
@@ -49,13 +52,17 @@ module.exports = function(spreadsheetKey, onLoaded) {
         });
     }
 
-    function getSheetCount(spreadsheetKey, onSuccess) {
+    function getSpreadsheetInfo(spreadsheetKey, onSuccess) {
         $.ajax({
             url: "https://spreadsheets.google.com/feeds/worksheets/" + spreadsheetKey + "/public/full?alt=json-in-script",
             jsonp: "callback",
             dataType: "jsonp",
             success: function(response) {
-                onSuccess(response.feed.entry.length);
+                var info = {
+                    sheetCount: response.feed.entry.length,
+                    title: response.feed.title.$t
+                };
+                onSuccess(info);
             }
         });
     }
