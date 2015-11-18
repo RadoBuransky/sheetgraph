@@ -1,5 +1,6 @@
 module.exports = function(graph, svgContainerId, svg) {
     var node = [],
+        nodeLabel = [],
         link = [],
         linkLabel = [];
 
@@ -34,9 +35,12 @@ module.exports = function(graph, svgContainerId, svg) {
 //            .attr("class", "link-label")
 //            .attr("text-anchor", "middle");
 
-        node = svg.selectAll(".node").data(graph.nodes)
-            .enter().append("g")
+        svg.selectAll(".node")
+            .data(graph.nodes)
+            .enter()
+            .append("circle")
             .attr("class", "node")
+            .attr("r", 30) // TODO: Settings
             .attr("x", 0)
             .attr("y", 0)
 //            .attr("id", nodeId)
@@ -46,13 +50,15 @@ module.exports = function(graph, svgContainerId, svg) {
 //                view.selectNode(node);
 //            });
 
-        var circle = node.append("circle")
-            .attr("r", 30); // TODO: Settings
-
-        node.append("text")
+        svg.selectAll(".node-label")
+            .data(graph.nodes)
+            .enter()
+            .append("text")
+            .attr("class", "node-label")
             .attr("dy", ".35em")
             .attr("text-anchor", "middle")
-            .text(function(n) { return n.label; });
+            .text(function(n) { return n.label; })
+            .call(force.drag);;
 
         selectAll();
         force.start();
@@ -60,6 +66,7 @@ module.exports = function(graph, svgContainerId, svg) {
 
     function selectAll() {
         node = svg.selectAll(".node");
+        nodeLabel = svg.selectAll(".node-label");
         link = svg.selectAll(".link");
         linkLabel = svg.selectAll(".link-label");
     }
@@ -79,5 +86,9 @@ module.exports = function(graph, svgContainerId, svg) {
         node.attr("transform", function(d) {
             return "translate(" + d.x + "," + d.y + ")";
         });
+
+        nodeLabel
+            .attr("x", function(d) { return d.x; })
+            .attr("y", function(d) { return d.y; });
     }
 }

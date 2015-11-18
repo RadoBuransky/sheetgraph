@@ -23,11 +23,11 @@ html, body {
 .node {
     stroke: gray;
     fill: white;
+    cursor: pointer;
 }
 
-.node text {
-    stroke: black;
-    fill: black;
+.node-label {
+    cursor: pointer;
 }
 
 .link {
