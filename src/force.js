@@ -2,7 +2,8 @@ module.exports = function(graph, svgContainerId, svg) {
     var node = [],
         nodeLabel = [],
         link = [],
-        linkLabel = [];
+        linkLabel = [],
+        colors = d3.scale.category20();
 
     var svgContainer = $("#" + svgContainerId),
         width = svgContainer.width(),
@@ -43,7 +44,7 @@ module.exports = function(graph, svgContainerId, svg) {
             .attr("r", 30) // TODO: Settings
             .attr("x", 0)
             .attr("y", 0)
-//            .attr("id", nodeId)
+            .attr("fill", function(n) { return colors(n.sheetName); })
             .call(force.drag);
 //            .on("click", function(node) {
 //                modelController.showInfo(node, model);

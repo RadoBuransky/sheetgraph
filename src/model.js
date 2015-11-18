@@ -13,7 +13,7 @@ module.exports = function(spreadsheet) {
         // Create nodes with properties
         var sheets = {};
         $.each(nodeSheetNames, function(i, nodeSheetName) {
-            sheets[nodeSheetName] = getNodes(spreadsheet[nodeSheetName]);
+            sheets[nodeSheetName] = getNodes(spreadsheet[nodeSheetName], nodeSheetName);
         });
 
         // Create link names
@@ -66,8 +66,9 @@ module.exports = function(spreadsheet) {
             });
         }
 
-        function getNodes(nodeSheet) {
+        function getNodes(nodeSheet, nodeSheetName) {
             var result = {
+                name: nodeSheetName,
                 label: nodeSheet.header[0],
                 propertyNames: [],
                 linkNames: [],

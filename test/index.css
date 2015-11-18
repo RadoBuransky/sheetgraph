@@ -22,7 +22,6 @@ html, body {
 
 .node {
     stroke: gray;
-    fill: white;
     cursor: pointer;
 }
 

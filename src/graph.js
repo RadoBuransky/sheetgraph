@@ -11,6 +11,7 @@ module.exports = function(model) {
             // Add node to graph
             node.graphIndex = graph.nodes.push(node) - 1;
             node.label = node[sheet.label];
+            node.sheetName = sheet.name;
         });
     });
 
