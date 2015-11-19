@@ -23,6 +23,10 @@ module.exports = function(spreadsheetKey, onLoaded) {
 
     function loadSheet(spreadsheet, spreadsheetKey, sheetIndex) {
         return getSheet(spreadsheetKey, sheetIndex, function(response) {
+            if (response.feed.title.$t == "settings") {
+                return;
+            }
+
             var sheet = spreadsheet.sheets[response.feed.title.$t] = {
                 header: [],
                 rows: [],

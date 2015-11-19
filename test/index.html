@@ -32,9 +32,25 @@
     <script src="../d3sheet.js"></script>
 
     <script>
+        // Example 1: "145TdEqd9nbnRFWWGUM-tdedulewUvZjRpHP7C09pIaQ"
         d3sheet
             .init("d3sheet-svg", "d3sheet-info")
-            .load("145TdEqd9nbnRFWWGUM-tdedulewUvZjRpHP7C09pIaQ");
+            .load(getUrlParameter("s"));
+
+        function getUrlParameter(sParam) {
+            var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : sParameterName[1];
+                }
+            }
+        };
     </script>
 </body>
 </html>
