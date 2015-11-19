@@ -20,7 +20,7 @@ module.exports = function(infoContainerId, title) {
         });
 
         // Show node links
-        var linkNames = Object.keys(node.links)
+        var linkNames = Object.keys(node.links);
         $.each(linkNames, function(i, linkName) {
             var targetNames = "";
             $.each(node.links[linkName], function(i, targetIndex) {

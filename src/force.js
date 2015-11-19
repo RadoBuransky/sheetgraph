@@ -22,7 +22,7 @@ module.exports = function(graph, svgContainerId, svg, info) {
 
     restart();
 
-    function restart() {
+    function restart(viewOptions) {
         svg.selectAll(".link")
             .data(graph.links)
             .enter()
@@ -98,4 +98,6 @@ module.exports = function(graph, svgContainerId, svg, info) {
             .attr("x", function(d) { return d.x; })
             .attr("y", function(d) { return d.y; });
     }
+
+    return this;
 }

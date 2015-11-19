@@ -69,7 +69,11 @@
 
             // Create D3 force layout from graph
             var forceModule = require("./force");
-            forceModule(d3sheet.graph, d3sheet.svgContainerId, d3sheet.svg, info, spreadsheet.settings);
+            var force = forceModule(d3sheet.graph, d3sheet.svgContainerId, d3sheet.svg, info, spreadsheet.settings);
+
+            // Initialize view options
+//            var viewModule = require("./view");
+//            viewModule(d3sheet.model, force.updateGraph);
 
             // Apply CSS style
             applyCss(spreadsheet.settings.css);
@@ -77,8 +81,6 @@
     }
 
     function applyCss(css) {
-        console.log(css);
-
         // Get all element selectors
         var selectors = Object.keys(css);
         $.each(selectors, function(i, selector) {

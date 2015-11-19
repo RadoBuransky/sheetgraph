@@ -15,7 +15,6 @@ module.exports = function(spreadsheetKey, onLoaded) {
             loadSheet(spreadsheet, spreadsheetKey, i).then(function() {
                 loadedSheetCount += 1;
                 if (loadedSheetCount == info.sheetCount) {
-                    console.log(spreadsheet);
                     onLoaded(spreadsheet);
                 }
             })
