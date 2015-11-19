@@ -20,21 +20,25 @@ module.exports = function(model) {
     $.each(model.sheets, function(i, sheet) {
         // For all nodes
         $.each(sheet.nodes, function(j, node) {
-            // For all link names
-            $.each(sheet.linkNames, function(k, linkName) {
+            // For all linked sheets
+            $.each(sheet.linkedSheets, function(k, linkedSheet) {
+                if (node.links[linkedSheet.name] == null)
+                    return;
+
                 // For all target nodes
                 var graphTargetIndexes = [];
-                $.each(node.links[linkName], function(l, targetIndex) {
+                $.each(node.links[linkedSheet.name], function(l, targetIndex) {
                     var link = {
                         source: node.graphIndex,
-                        target: model.sheets[linkName].nodes[targetIndex].graphIndex
+                        target: model.sheets[linkedSheet.name].nodes[targetIndex].graphIndex,
+                        label: linkedSheet.label
                     };
                     graphTargetIndexes.push(link.target);
                     graph.links.push(link);
                 });
 
                 // Replace model indexes with graph indexes
-                node.links[linkName] = graphTargetIndexes;
+                node.links[linkedSheet.name] = graphTargetIndexes;
             });
         });
     });

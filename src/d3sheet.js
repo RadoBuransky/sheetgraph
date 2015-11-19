@@ -63,6 +63,8 @@
             var modelModule = require("./model");
             d3sheet.model = modelModule(d3sheet.spreadsheet);
 
+            console.log(d3sheet.model);
+
             // Create graph from model
             var graphModule = require("./graph");
             d3sheet.graph = graphModule(d3sheet.model);
@@ -81,6 +83,9 @@
     }
 
     function applyCss(css) {
+        if (css == null)
+            return;
+
         // Get all element selectors
         var selectors = Object.keys(css);
         $.each(selectors, function(i, selector) {

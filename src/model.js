@@ -62,7 +62,10 @@ module.exports = function(spreadsheet) {
             $.each(nodeSheet.header, function(i, propertyName) {
                 var linkTarget = parseColumnLinkName(propertyName, sheets);
                 if (linkTarget != null)
-                    source.linkNames.push(linkTarget.sheetName);
+                    source.linkedSheets.push({
+                        name: linkTarget.sheetName,
+                        label: linkTarget.label
+                    });
             });
         }
 
@@ -71,7 +74,7 @@ module.exports = function(spreadsheet) {
                 name: nodeSheetName,
                 label: nodeSheet.header[0],
                 propertyNames: [],
-                linkNames: [],
+                linkedSheets: [],
                 nodes: []
             };
 
@@ -138,13 +141,18 @@ module.exports = function(spreadsheet) {
 
     function parseColumnLinkName(colName, sheets) {
         var linkNames = colName.split(".");
-        if ((linkNames.length == 2) &&
+        if ((linkNames.length >= 2) &&
             (sheets[linkNames[0]] != null) &&
             (sheets[linkNames[0]].propertyNames.indexOf(linkNames[1]) > -1)) {
-            return {
+            var result = {
                 sheetName: linkNames[0],
                 propertyName: linkNames[1]
             }
+
+            if (linkNames.length == 3)
+                result.label = linkNames[2];
+
+            return result;
         }
 
         return null;

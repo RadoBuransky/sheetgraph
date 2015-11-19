@@ -3,8 +3,6 @@ module.exports = function(infoContainerId, title) {
     $("#" + infoContainerId + " h1").text(title);
 
     this.showNode = function(node, nodes, fillColor) {
-        console.log(node);
-
         $("#d3sheet-node-info h2").text(node.label);
         $("#d3sheet-node-info header").css("background-color", fillColor);
         $("#d3sheet-node-sheet-name").text(node.sheetName);

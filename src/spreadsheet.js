@@ -8,7 +8,8 @@ module.exports = function(spreadsheetKey, onLoaded) {
     function loadSheets(spreadsheetKey, info) {
         var spreadsheet = {
             title: info.title,
-            sheets: {}
+            sheets: {},
+            settings: {}
         };
         var loadedSheetCount = 0;
         for (i = 1; i <= info.sheetCount; i++) {
