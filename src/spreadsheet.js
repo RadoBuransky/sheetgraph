@@ -15,6 +15,7 @@ module.exports = function(spreadsheetKey, onLoaded) {
             loadSheet(spreadsheet, spreadsheetKey, i).then(function() {
                 loadedSheetCount += 1;
                 if (loadedSheetCount == info.sheetCount) {
+                    console.log(spreadsheet);
                     onLoaded(spreadsheet);
                 }
             })
@@ -24,6 +25,7 @@ module.exports = function(spreadsheetKey, onLoaded) {
     function loadSheet(spreadsheet, spreadsheetKey, sheetIndex) {
         return getSheet(spreadsheetKey, sheetIndex, function(response) {
             if (response.feed.title.$t == "settings") {
+                loadSettingsSheet(response, spreadsheet);
                 return;
             }
 
@@ -45,6 +47,43 @@ module.exports = function(spreadsheetKey, onLoaded) {
                 }
             });
         });
+    }
+
+    function loadSettingsSheet(settingsSheet, spreadsheet) {
+        // Map cells to list
+        var settingsList = {};
+        $.each(settingsSheet.feed.entry, function(i, e) {
+            if (settingsList[e.gs$cell.row] == null)
+                settingsList[e.gs$cell.row] = {};
+
+            if (e.gs$cell.col == 1)
+                settingsList[e.gs$cell.row].key = e.content.$t;
+            else
+                if (e.gs$cell.col == 2)
+                    settingsList[e.gs$cell.row].value = e.content.$t;
+        });
+
+        // Map list to object
+        var settings = {};
+        $.each(settingsList, function(i, s) {
+            if ((s.key == null) || (s.value == null))
+                return;
+
+            // Create inner objects
+            var path = s.key.split(".");
+            var current = settings;
+            $.each(path, function(j, k) {
+                if (current[k] == null) {
+                    if (j == path.length - 1)
+                        current[k] = s.value;
+                    else
+                        current[k] = {};
+                }
+                current = current[k];
+            });
+        });
+
+        spreadsheet.settings = settings;
     }
 
     function getSheet(spreadsheetKey, sheetIndex, onSuccess) {
