@@ -13,7 +13,7 @@ check following examples to learn by them.
 ## Example 1: movies and actors
 
 - [Google Spreadsheet](https://docs.google.com/spreadsheets/d/145TdEqd9nbnRFWWGUM-tdedulewUvZjRpHP7C09pIaQ/)
-- [Graph](http://radoburansky.github.io/d3sheet/demo/movies-and-actors)
+- [Graph](http://radoburansky.github.io/d3sheet/demo/index.html?s=145TdEqd9nbnRFWWGUM-tdedulewUvZjRpHP7C09pIaQ)
 
 ## Documentation
 
