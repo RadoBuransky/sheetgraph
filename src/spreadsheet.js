@@ -64,7 +64,9 @@ module.exports = function(spreadsheetKey, onLoaded) {
         });
 
         // Map list to object
-        var settings = {};
+        var settings = {
+            css: {}
+        };
         $.each(settingsList, function(i, s) {
             if ((s.key == null) || (s.value == null))
                 return;
