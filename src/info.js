@@ -33,7 +33,14 @@ module.exports = function(infoContainerId, title) {
 
         function addProperty(name, value) {
             ul.append("<li><span class=\"d3sheet-node-property-name\">" + name +
-                ":</span> <span class=\"d3sheet-node-property-value\">" + value + "</span></li>");
+                ":</span> <span class=\"d3sheet-node-property-value\">" + formatValue(value) + "</span></li>");
+        }
+
+        function formatValue(value) {
+            if (value.slice(0, "4").toLowerCase() == "http")
+                return "<a href=\"" + value + "\">" + value + "</a>"
+
+            return value;
         }
     }
 
