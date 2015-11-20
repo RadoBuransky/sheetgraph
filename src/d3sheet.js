@@ -50,6 +50,8 @@
         // Load spreadsheet
         var spreadsheet = require("./spreadsheet");
         spreadsheet(spreadsheetKey, function(spreadsheet) {
+            console.log(spreadsheet);
+
             d3sheet.spreadsheet = spreadsheet;
 
             // Initialize document
@@ -62,6 +64,8 @@
             // Create model from spreadsheet
             var modelModule = require("./model");
             d3sheet.model = modelModule(d3sheet.spreadsheet);
+
+            console.log(d3sheet.model);
 
             // Create graph from model
             var graphModule = require("./graph");

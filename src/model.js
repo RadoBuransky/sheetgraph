@@ -1,8 +1,6 @@
 module.exports = function(spreadsheet) {
     var model = new Model();
 
-    console.log(spreadsheet);
-
     var nodeGroupTypes = getNodeGroupTypes(spreadsheet);
     model.nodeGroups = getNodeGroups(spreadsheet, nodeGroupTypes.nodeGroupNames);
     if (nodeGroupTypes.settingsGroupName != null)
@@ -169,7 +167,6 @@ module.exports = function(spreadsheet) {
         return null;
     }
 
-    console.log(model);
     return model;
 }
 

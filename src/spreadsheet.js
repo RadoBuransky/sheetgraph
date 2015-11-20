@@ -94,60 +94,60 @@ module.exports = function(spreadsheetKey, onLoaded) {
             }
         });
     }
+}
 
-    function Spreadsheet(spreadsheetKey, title) {
-        this.key = spreadsheetKey;
-        this.title = title;
-        this.sheets = new Sheets();
+function Spreadsheet(spreadsheetKey, title) {
+    this.key = spreadsheetKey;
+    this.title = title;
+    this.sheets = new Sheets();
 
-        return this;
-    }
+    return this;
+}
 
-    function Sheets() {
-        return this;
-    }
+function Sheets() {
+    return this;
+}
 
-    function Sheet() {
-        this.rows = [];
-        return this;
-    }
+function Sheet() {
+    this.rows = [];
+    return this;
+}
 
-    Sheet.prototype.header = function() {
-        return this.rows[0].values();
-    }
+Sheet.prototype.header = function() {
+    return this.rows[0].values();
+}
 
-    Sheet.prototype.value = function(row, colName) {
-        var colIndex = this.header().indexOf(colName);
-        if (colIndex == -1)
-            return null;
+Sheet.prototype.value = function(row, colName) {
+    var colIndex = this.header().indexOf(colName);
+    if (colIndex == -1)
+        return null;
 
-        var result = null;
-        $.each(row.rowCells, function(i, rowCell) {
-            if (rowCell.colIndex == colIndex) {
-                result = rowCell.value;
-                return false;
-            }
-        });
+    var result = null;
+    $.each(row.rowCells, function(i, rowCell) {
+        if (rowCell.colIndex == colIndex) {
+            result = rowCell.value;
+            return false;
+        }
+    });
 
-        return result;
-    }
+    return result;
+}
 
-    function Row(rowIndex) {
-        this.rowIndex = rowIndex;
-        this.rowCells = [];
+function Row(rowIndex) {
+    this.rowIndex = rowIndex;
+    this.rowCells = [];
 
-        return this;
-    }
+    return this;
+}
 
-    Row.prototype.values = function() {
-        return $.map(this.rowCells, function(rowCell, i) {
-            return rowCell.value;
-        });
-    }
+Row.prototype.values = function() {
+    return $.map(this.rowCells, function(rowCell, i) {
+        return rowCell.value;
+    });
+}
 
-    function RowCell(colIndex, value) {
-        this.colIndex = colIndex;
-        this.value = value;
-        return this;
-    }
+function RowCell(colIndex, value) {
+    this.colIndex = colIndex;
+    this.value = value;
+    return this;
 }
