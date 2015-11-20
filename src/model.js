@@ -13,11 +13,6 @@ module.exports = function(spreadsheet) {
             nodeGroups[nodeGroupName] = getNodes(spreadsheet.sheets[nodeGroupName], nodeGroupName);
         });
 
-        // Create reference names
-        $.each(nodeGroupNames, function(i, nodeGroupName) {
-            createRefNames(nodeGroups, spreadsheet.sheets[nodeGroupName], nodeGroupName);
-        });
-
         // Create references from node sheets
         $.each(nodeGroupNames, function(i, nodeGroupName) {
             createRefs(nodeGroups, spreadsheet.sheets[nodeGroupName], nodeGroupName);
@@ -48,27 +43,11 @@ module.exports = function(spreadsheet) {
                             // If target node property value matches
                             // TODO: We should properly split values using comma
                             if (value.indexOf(targetNode.value(refTarget.propertyName)) > -1) {
-                                var refs = nodeGroup.nodes[i - 1].refs;
-                                if (refs[refTarget.sheetName] == null)
-                                    refs[refTarget.sheetName] = [];
-
-                                // Add index of the target node to the nodeGroup node
-                                refs[refTarget.sheetName].push(k);
+                                nodeGroup.nodes[i - 1].refs.push(new Ref(targetNode, refTarget.label));
                             }
                         });
                     }
                 });
-            });
-        }
-
-        function createRefNames(sheets, nodeSheet, nodeGroupName) {
-            var source = sheets[nodeGroupName];
-
-            // Get ref names
-            $.each(nodeSheet.header(), function(i, propertyName) {
-                var refTarget = parseColumnRefName(propertyName, sheets);
-                if (refTarget != null)
-                    source.refdNodeGroups.push(new RefdNodeGroup(refTarget.sheetName, refTarget.label));
             });
         }
 
@@ -81,13 +60,6 @@ module.exports = function(spreadsheet) {
                 if (i == 0)
                     return;
                 result.nodes.push(new Node(getNodeProperties(row, header)));
-            });
-
-            // Get property names
-            $.each(header, function(i, colName) {
-                var refTarget = colName.split(".");
-                if (refTarget.length == 1)
-                    result.propertyNames.push(colName);
             });
 
             return result;
@@ -139,8 +111,7 @@ module.exports = function(spreadsheet) {
     function parseColumnRefName(colName, sheets) {
         var refNames = colName.split(".");
         if ((refNames.length >= 2) &&
-            (sheets[refNames[0]] != null) &&
-            (sheets[refNames[0]].propertyNames.indexOf(refNames[1]) > -1)) {
+            (sheets[refNames[0]] != null)) {
             var result = {
                 sheetName: refNames[0],
                 propertyName: refNames[1]
@@ -180,24 +151,22 @@ function NodeGroups() {
     return this;
 }
 
-function NodeGroup(name, label) {
+function NodeGroup(name, labelPropertyName) {
     this.name = name;
-    this.label = label;
-    this.propertyNames = [];
-    this.refdNodeGroups = [];
+    this.labelPropertyName = labelPropertyName;
     this.nodes = [];
-    return this;
-}
-
-function RefdNodeGroup(name, label) {
-    this.name = name;
-    this.label = label;
     return this;
 }
 
 function Node(properties) {
     this.properties = properties;
-    this.refs = {};
+    this.refs = [];
+    return this;
+}
+
+function Ref(targetNode, label) {
+    this.targetNode = targetNode;
+    this.label = label;
     return this;
 }
 

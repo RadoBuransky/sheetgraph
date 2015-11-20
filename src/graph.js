@@ -12,31 +12,30 @@ module.exports = function(model) {
     });
 
     // Create links
-    $.each(model.nodeGroups, function(i, nodeGroup) {
-        // For all nodes
-        $.each(nodeGroup.nodes, function(j, node) {
-            // For all linked nodeGroups
-            $.each(nodeGroup.linkedNodeGroups, function(k, linkedSheet) {
-                if (node.links[linkedSheet.name] == null)
-                    return;
+    $.each(graph.nodes, function(i, graphNode) {
+        // For all references
+        $.each(graphNode.node.refs, function(j, ref) {
+            var targetNodeIndex = nodeGraphIndex(ref.targetNode);
 
-                // For all target nodes
-                var graphTargetIndexes = [];
-                $.each(node.links[linkedSheet.name], function(l, targetIndex) {
-                    var link = {
-                        source: node.graphIndex,
-                        target: model.nodeGroups[linkedSheet.name].nodes[targetIndex].graphIndex,
-                        label: linkedSheet.label
-                    };
-                    graphTargetIndexes.push(link.target);
-                    graph.links.push(link);
-                });
-
-                // Replace model indexes with graph indexes
-                node.links[linkedSheet.name] = graphTargetIndexes;
-            });
+            var link = {
+                source: graphNode,
+                target: graph.nodes[targetNodeIndex],
+                label: ref.label
+            };
+            graph.links.push(link);
         });
     });
+
+    function nodeGraphIndex(node) {
+        var result = -1;
+        $.each(graph.nodes, function(i, graphNode) {
+            if (graphNode.node == node) {
+                result = i;
+                return false;
+            }
+        });
+        return result;
+    }
 
     return graph;
 }
