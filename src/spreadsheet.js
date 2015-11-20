@@ -6,16 +6,13 @@ module.exports = function(spreadsheetKey, onLoaded) {
     });
 
     function loadSheets(spreadsheetKey, info) {
-        var spreadsheet = {
-            title: info.title,
-            sheets: {},
-            settings: {}
-        };
+        var spreadsheet = new Spreadsheet(spreadsheetKey, info.title);
         var loadedSheetCount = 0;
         for (i = 1; i <= info.sheetCount; i++) {
             loadSheet(spreadsheet, spreadsheetKey, i).then(function() {
                 loadedSheetCount += 1;
                 if (loadedSheetCount == info.sheetCount) {
+                    console.log(spreadsheet);
                     onLoaded(spreadsheet);
                 }
             })
@@ -29,10 +26,7 @@ module.exports = function(spreadsheetKey, onLoaded) {
                 return;
             }
 
-            var sheet = spreadsheet.sheets[response.feed.title.$t] = {
-                header: [],
-                rows: [],
-            };
+            var sheet = spreadsheet.sheets[response.feed.title.$t] = new Sheet();
 
             $.each(response.feed.entry, function(i, e) {
                 if (e.gs$cell.row == 1) {
@@ -64,16 +58,13 @@ module.exports = function(spreadsheetKey, onLoaded) {
         });
 
         // Map list to object
-        var settings = {
-            css: {}
-        };
         $.each(settingsList, function(i, s) {
             if ((s.key == null) || (s.value == null))
                 return;
 
             // Create inner objects
             var path = s.key.split(".");
-            var current = settings;
+            var current = spreadsheet.settings;
             $.each(path, function(j, k) {
                 if (current[k] == null) {
                     if (j == path.length - 1)
@@ -84,8 +75,6 @@ module.exports = function(spreadsheetKey, onLoaded) {
                 current = current[k];
             });
         });
-
-        spreadsheet.settings = settings;
     }
 
     function getSheet(spreadsheetKey, sheetIndex, onSuccess) {
@@ -110,5 +99,29 @@ module.exports = function(spreadsheetKey, onLoaded) {
                 onSuccess(info);
             }
         });
+    }
+
+    function Spreadsheet(spreadsheetKey, title) {
+        this.key = spreadsheetKey;
+        this.title = title;
+        this.sheets = new Sheets();
+        this.settings = new SettingsSheet();
+
+        return this;
+    }
+
+    function Sheets() {
+        return this;
+    }
+
+    function Sheet() {
+        this.header = [];
+        this.rows = [];
+        return this;
+    }
+
+    function SettingsSheet() {
+        this.css = {};
+        return this;
     }
 }

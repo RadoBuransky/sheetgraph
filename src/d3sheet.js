@@ -63,8 +63,6 @@
             var modelModule = require("./model");
             d3sheet.model = modelModule(d3sheet.spreadsheet);
 
-            console.log(d3sheet.model);
-
             // Create graph from model
             var graphModule = require("./graph");
             d3sheet.graph = graphModule(d3sheet.model);
