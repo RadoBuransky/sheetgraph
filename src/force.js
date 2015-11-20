@@ -22,6 +22,9 @@ module.exports = function(graph, svgContainerId, svg, info) {
 
     restart();
 
+    this.updateGraph = function () {
+    }
+
     function restart(viewOptions) {
         svg.selectAll(".link")
             .data(graph.links)

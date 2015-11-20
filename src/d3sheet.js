@@ -78,8 +78,8 @@
             var force = forceModule(d3sheet.graph, d3sheet.svgContainerId, d3sheet.svg, info, spreadsheet.settings);
 
             // Initialize view options
-//            var viewModule = require("./view");
-//            viewModule(d3sheet.model, force.updateGraph);
+            var viewModule = require("./view");
+            viewModule(d3sheet.model, force.updateGraph);
 
             // Apply CSS style
             applyCss(d3sheet.model.settings.css);

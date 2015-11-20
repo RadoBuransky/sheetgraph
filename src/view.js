@@ -1,16 +1,15 @@
 module.exports = function(model, updateGraph) {
-    initNodeVisibility(model.sheets);
+    initNodeVisibility(model.nodeGroups);
 
-    function initNodeVisibility(sheets) {
+    function initNodeVisibility(nodeGroups) {
         // Create visibility checkboxes
         var e = $("#d3sheet-node-visibility");
-        var sheetNames = Object.keys(sheets);
-        $.each(sheetNames, function(i, sheetName) {
-            var eId = nodeVisiblityCheckboxId(sheetName);
+        $.each(nodeGroups.items, function(i, nodeGroup) {
+            var eId = nodeVisiblityCheckboxId(nodeGroup);
 
             // Create checkbox
             e.append("<div class=\"checkbox\"><label>" +
-                "<input type=\"checkbox\" id=\"" + eId + "\" checked=\"checked\">" + sheetName + "</label></div>");
+                "<input type=\"checkbox\" id=\"" + eId + "\" checked=\"checked\">" + nodeGroup.name + "</label></div>");
 
             // Add click handler
             $("#" + eId).click(function() {
@@ -20,24 +19,24 @@ module.exports = function(model, updateGraph) {
     }
 
     function updateView() {
-        var viewOptions = {
-            nodeVisibility: getNodeVisibility(model.sheets)
-        }
-
-        updateGraph(viewOptions);
+        updateGraph(new ViewOptions(getNodeVisibility(model.nodeGroups)));
     }
 
-    function getNodeVisibility(sheets) {
+    function getNodeVisibility(nodeGroups) {
         var result = {};
-        var sheetNames = Object.keys(sheets);
-        $.each(sheetNames, function(i, sheetName) {
-            var isVisible = $("#" + nodeVisiblityCheckboxId(sheetName)).is(":checked");
-            result[sheetName] = isVisible;
+        $.each(nodeGroups.items, function(i, nodeGroup) {
+            var isVisible = $("#" + nodeVisiblityCheckboxId(nodeGroup)).is(":checked");
+            result[nodeGroup.name] = isVisible;
         });
         return result;
     }
 
-    function nodeVisiblityCheckboxId(sheetName) {
-        return "d3sheet-node-visibility-" + sheetName;
+    function nodeVisiblityCheckboxId(nodeGroup) {
+        return "d3sheet-node-visibility-" + nodeGroup.name;
     }
+}
+
+function ViewOptions(nodeVisibility) {
+    this.nodeVisibility = nodeVisibility;
+    return this;
 }

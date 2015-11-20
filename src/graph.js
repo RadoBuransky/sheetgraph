@@ -2,7 +2,7 @@ module.exports = function(model) {
     var graph = new Graph();
 
     // For all sheets
-    $.each(model.nodeGroups, function(i, nodeGroup) {
+    $.each(model.nodeGroups.items, function(i, nodeGroup) {
         // For all nodes
         $.each(nodeGroup.nodes, function(j, node) {
             // Add node to graph

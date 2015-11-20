@@ -10,18 +10,17 @@ module.exports = function(spreadsheet) {
         // Create nodes with properties
         var nodeGroups = new NodeGroups();
         $.each(nodeGroupNames, function(i, nodeGroupName) {
-            nodeGroups[nodeGroupName] = getNodes(spreadsheet.sheets[nodeGroupName], nodeGroupName);
+            nodeGroups.items.push(getNodes(spreadsheet.sheets[nodeGroupName], nodeGroupName));
         });
 
         // Create references from node sheets
-        $.each(nodeGroupNames, function(i, nodeGroupName) {
-            createRefs(nodeGroups, spreadsheet.sheets[nodeGroupName], nodeGroupName);
+        $.each(nodeGroups.items, function(i, nodeGroup) {
+            createRefs(nodeGroups, spreadsheet.sheets[nodeGroup.name], nodeGroup);
         });
 
         // TODO: Create references from reference sheets
 
-        function createRefs(nodeGroups, nodeSheet, nodeGroupName) {
-            var nodeGroup = nodeGroups[nodeGroupName];
+        function createRefs(nodeGroups, nodeSheet, nodeGroup) {
             var colNames = nodeSheet.header();
 
             // For all sheet rows
@@ -39,7 +38,7 @@ module.exports = function(spreadsheet) {
                     var refTarget = parseColumnRefName(colName, nodeGroups);
                     if (refTarget != null) {
                         // Find index of the target node
-                        $.each(nodeGroups[refTarget.sheetName].nodes, function(k, targetNode) {
+                        $.each(refTarget.nodeGroup.nodes, function(k, targetNode) {
                             // If target node property value matches
                             // TODO: We should properly split values using comma
                             if (value.indexOf(targetNode.value(refTarget.propertyName)) > -1) {
@@ -108,12 +107,15 @@ module.exports = function(spreadsheet) {
         return nodeGroupTypes;
     }
 
-    function parseColumnRefName(colName, sheets) {
+    function parseColumnRefName(colName, nodeGroups) {
         var refNames = colName.split(".");
+        var nodeGroup = null;
+        if (refNames.length > 0)
+            nodeGroup = nodeGroups.getByName(refNames[0]);
         if ((refNames.length >= 2) &&
-            (sheets[refNames[0]] != null)) {
+            (nodeGroup != null)) {
             var result = {
-                sheetName: refNames[0],
+                nodeGroup: nodeGroup,
                 propertyName: refNames[1]
             }
 
@@ -142,13 +144,25 @@ module.exports = function(spreadsheet) {
 }
 
 function Model() {
-    this.nodeGroups = {};
+    this.nodeGroups = new NodeGroups();
     this.settings = {};
     return this;
 }
 
 function NodeGroups() {
+    this.items = [];
     return this;
+}
+
+NodeGroups.prototype.getByName = function(nodeGroupName) {
+    var result = null;
+    $.each(this.items, function(i, nodeGroup) {
+        if (nodeGroup.name == nodeGroupName) {
+            result = nodeGroup;
+            return false;
+        }
+    });
+    return result;
 }
 
 function NodeGroup(name, labelPropertyName) {
