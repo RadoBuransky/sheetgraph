@@ -20,12 +20,10 @@ module.exports = function(graph, svgContainerId, svg, info) {
         .links(graph.links)
         .on("tick", onTick);
 
+    this.restart = restart
     restart();
 
-    this.updateGraph = function () {
-    }
-
-    function restart(viewOptions) {
+    function restart() {
         svg.selectAll(".link")
             .data(graph.links)
             .enter()

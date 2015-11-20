@@ -179,12 +179,6 @@ function Node(properties, nodeGroup) {
     return this;
 }
 
-function Ref(targetNode, label) {
-    this.targetNode = targetNode;
-    this.label = label;
-    return this;
-}
-
 Node.prototype.value = function(propertyName) {
     var result = null;
     $.each(this.properties, function(i, property) {
@@ -203,5 +197,11 @@ Node.prototype.label = function() {
 function NodeProperty(name, value) {
     this.name = name;
     this.value = value;
+    return this;
+}
+
+function Ref(targetNode, label) {
+    this.targetNode = targetNode;
+    this.label = label;
     return this;
 }

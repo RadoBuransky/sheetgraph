@@ -79,7 +79,11 @@
 
             // Initialize view options
             var viewModule = require("./view");
-            viewModule(d3sheet.model, force.updateGraph);
+            viewModule(d3sheet.model, updateGraph);
+
+            function updateGraph(viewOptions) {
+                // TODO: update d3sheet.graph and force.restart()
+            }
 
             // Apply CSS style
             applyCss(d3sheet.model.settings.css);
