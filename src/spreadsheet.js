@@ -27,12 +27,12 @@ module.exports = function(spreadsheetKey, onLoaded) {
                 if (sheet.rows[index] == null) {
                     sheet.rows[index] = new Row(index);
                 }
-                sheet.rows[index].cols.push(new RowCell(e.gs$cell.col - 1, e.content.$t));
+                sheet.rows[index].rowCells.push(new RowCell(e.gs$cell.col - 1, e.content.$t));
             });
 
             // Sort row cells by col index
             $.each(sheet.rows, function(i, row) {
-                row.cols.sort(function(c1, c2) { return c1.colIndex - c2.colIndex; });
+                row.rowCells.sort(function(c1, c2) { return c1.colIndex - c2.colIndex; });
             });
         });
     }
@@ -112,10 +112,21 @@ module.exports = function(spreadsheetKey, onLoaded) {
         return this;
     }
 
+    Sheet.prototype.header = function() {
+        return this.rows[0].values();
+    }
+
     function Row(rowIndex) {
         this.rowIndex = rowIndex;
-        this.cols = [];
+        this.rowCells = [];
+
         return this;
+    }
+
+    Row.prototype.values = function() {
+        return $.map(this.rowCells, function(rowCell, i) {
+            return rowCell.value;
+        });
     }
 
     function RowCell(colIndex, value) {

@@ -3,32 +3,32 @@ module.exports = function(spreadsheet) {
 
     console.log(spreadsheet);
 
-    var sheetTypes = getSheetTypes(spreadsheet);
-    model.sheets = getGraph(spreadsheet, sheetTypes.nodesSheetNames);
-    if (sheetTypes.settingsSheetName != null)
-        model.settings = spreadsheet.sheets[sheetTypes.settingsSheetName];
+    var nodeGroupTypes = getNodeGroupTypes(spreadsheet);
+    model.nodeGroups = getNodeGroups(spreadsheet, nodeGroupTypes.nodeGroupNames);
+    if (nodeGroupTypes.settingsGroupName != null)
+        model.settings = spreadsheet.sheets[nodeGroupTypes.settingsGroupName];
 
-    function getGraph(spreadsheet, nodeSheetNames) {
+    function getNodeGroups(spreadsheet, nodeGroupNames) {
         // Create nodes with properties
-        var sheets = {};
-        $.each(nodeSheetNames, function(i, nodeSheetName) {
-            sheets[nodeSheetName] = getNodes(spreadsheet.sheets[nodeSheetName], nodeSheetName);
+        var nodeGroups = new NodeGroups();
+        $.each(nodeGroupNames, function(i, nodeGroupName) {
+            nodeGroups[nodeGroupName] = getNodes(spreadsheet.sheets[nodeGroupName], nodeGroupName);
         });
 
         // Create link names
-        $.each(nodeSheetNames, function(i, nodeSheetName) {
-            createLinkNames(sheets, spreadsheet.sheets[nodeSheetName], nodeSheetName);
+        $.each(nodeGroupNames, function(i, nodeGroupName) {
+            createLinkNames(nodeGroups, spreadsheet.sheets[nodeGroupName], nodeGroupName);
         });
 
         // Create links from node sheets
-        $.each(nodeSheetNames, function(i, nodeSheetName) {
-            createLinks(sheets, spreadsheet.sheets[nodeSheetName], nodeSheetName);
+        $.each(nodeGroupNames, function(i, nodeGroupName) {
+            createLinks(nodeGroups, spreadsheet.sheets[nodeGroupName], nodeGroupName);
         });
 
         // TODO: Create links from link sheets
 
-        function createLinks(sheets, nodeSheet, nodeSheetName) {
-            var source = sheets[nodeSheetName];
+        function createLinks(sheets, nodeSheet, nodeGroupName) {
+            var source = nodeGroups[nodeGroupName];
 
             // For all sheet rows
             $.each(nodeSheet.rows, function(i, row) {
@@ -54,39 +54,30 @@ module.exports = function(spreadsheet) {
             });
         }
 
-        function createLinkNames(sheets, nodeSheet, nodeSheetName) {
-            var source = sheets[nodeSheetName];
+        function createLinkNames(sheets, nodeSheet, nodeGroupName) {
+            var source = sheets[nodeGroupName];
 
             // Get link names
-            $.each(nodeSheet.header, function(i, propertyName) {
+            $.each(nodeSheet.header(), function(i, propertyName) {
                 var linkTarget = parseColumnLinkName(propertyName, sheets);
                 if (linkTarget != null)
-                    source.linkedSheets.push({
-                        name: linkTarget.sheetName,
-                        label: linkTarget.label
-                    });
+                    source.linkedNodeGroups.push(new LinkedNodeGroup(linkTarget.sheetName, linkTarget.label));
             });
         }
 
-        function getNodes(nodeSheet, nodeSheetName) {
-            var result = {
-                name: nodeSheetName,
-                label: nodeSheet.header[0],
-                propertyNames: [],
-                linkedSheets: [],
-                nodes: []
-            };
+        function getNodes(nodeSheet, nodeGroupName) {
+            var header = nodeSheet.header();
+            var result = new NodeGroup(nodeGroupName, header[0]);
 
             // Get nodes and properties
             $.each(nodeSheet.rows, function(i, row) {
-                result.nodes.push({
-                    properties: getNodeProperties(row),
-                    links: {}
-                });
+                if (i == 0)
+                    return;
+                result.nodes.push(new Node(getNodeProperties(row, header)));
             });
 
             // Get property names
-            $.each(nodeSheet.header, function(i, colName) {
+            $.each(header, function(i, colName) {
                 var linkTarget = colName.split(".");
                 if (linkTarget.length == 1)
                     result.propertyNames.push(colName);
@@ -95,29 +86,29 @@ module.exports = function(spreadsheet) {
             return result;
         }
 
-        function getNodeProperties(row) {
-            var nodeProperties = {};
-            var colNames = Object.keys(row);
-            $.each(colNames, function(i, colName) {
+        function getNodeProperties(row, header) {
+            var nodeProperties = [];
+            $.each(row.rowCells, function(i, rowCell) {
+                var colName = header[rowCell.colIndex];
                 if (colName.indexOf(".") == -1)
-                    nodeProperties[colName] = row[colName];
+                    nodeProperties.push(new NodeProperty(colName, rowCell.value));
             });
             return nodeProperties;
         }
 
-        return sheets;
+        return nodeGroups;
     }
 
-    function getSheetTypes(spreadsheet) {
-        var sheetTypes = {
-            nodesSheetNames: [],
+    function getNodeGroupTypes(spreadsheet) {
+        var nodeGroupTypes = {
+            nodeGroupNames: [],
             linkSheetNames: [],
-            settingsSheetName: null
+            settingsGroupName: null
         };
         var sheetNames = Object.keys(spreadsheet.sheets);
         $.each(sheetNames, function(i, sheetName) {
             if (sheetName == "settings") {
-                sheetTypes.settingsSheetName = sheetName;
+                nodeGroupTypes.settingsGroupName = sheetName;
                 return;
             }
 
@@ -128,14 +119,14 @@ module.exports = function(spreadsheet) {
             if ((linkSheet != null) &&
                 (sheetNames.indexOf(linkSheet.source) > -1) &&
                 (sheetNames.indexOf(linkSheet.target) > -1)) {
-                sheetTypes.linkSheetNames.push(sheetName)
+                nodeGroupTypes.linkSheetNames.push(sheetName)
                 return;
             }
 
-            sheetTypes.nodesSheetNames.push(sheetName);
+            nodeGroupTypes.nodeGroupNames.push(sheetName);
         });
 
-        return sheetTypes;
+        return nodeGroupTypes;
     }
 
     function parseColumnLinkName(colName, sheets) {
@@ -170,8 +161,39 @@ module.exports = function(spreadsheet) {
     }
 
     function Model() {
-        this.sheets = {};
+        this.nodeGroups = {};
         this.settings = {};
+        return this;
+    }
+
+    function NodeGroups() {
+        return this;
+    }
+
+    function NodeGroup(name, label) {
+        this.name = name;
+        this.label = label;
+        this.propertyNames = [];
+        this.linkedNodeGroups = [];
+        this.nodes = [];
+        return this;
+    }
+
+    function LinkedNodeGroup(name, label) {
+        this.name = name;
+        this.label = label;
+        return this;
+    }
+
+    function Node(properties) {
+        this.properties = properties;
+        this.links = {};
+        return this;
+    }
+
+    function NodeProperty(name, value) {
+        this.name = name;
+        this.value = value;
         return this;
     }
 
