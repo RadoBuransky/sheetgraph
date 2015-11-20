@@ -64,12 +64,12 @@ module.exports = function(graph, svgContainerId, svg, info) {
         force.start();
     }
 
-    function nodeClick(node) {
-        info.showNode(node, graph.nodes, nodeFillColor(node));
+    function nodeClick(graphNode) {
+        info.showNode(graphNode.node, nodeFillColor(graphNode));
     }
 
-    function nodeFillColor(node) {
-        return colors(node.sheetName);
+    function nodeFillColor(graphNode) {
+        return colors(graphNode.node.nodeGroup.name);
     }
 
     function selectAll() {

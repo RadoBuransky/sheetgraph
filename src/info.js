@@ -2,31 +2,37 @@ module.exports = function(infoContainerId, title) {
     // Set heading
     $("#" + infoContainerId + " h1").text(title);
 
-    this.showNode = function(node, nodes, fillColor) {
-        $("#d3sheet-node-info h2").text(node.label);
+    this.showNode = function(node, fillColor) {
+        $("#d3sheet-node-info h2").text(node.label());
         $("#d3sheet-node-info header").css("background-color", fillColor);
-        $("#d3sheet-node-sheet-name").text(node.sheetName);
+        $("#d3sheet-node-sheet-name").text(node.nodeGroup.name);
 
         var ul = $("#d3sheet-node-properties");
         ul.empty();
 
         // Show node properties
-        var propertyNames = Object.keys(node.properties);
-        $.each(propertyNames, function(i, propertyName) {
-            if (propertyName != node.labelProperty)
-                addProperty(propertyName, node.properties[propertyName]);
+        $.each(node.properties, function(i, nodeProperty) {
+            if (nodeProperty.name != node.labelPropertyName)
+                addProperty(nodeProperty.name, nodeProperty.value);
+        });
+
+        // Group node links
+        var groupedLinks = {};
+        $.each(node.refs, function(i, ref) {
+            var linkName = ref.label;
+            if (linkName == null)
+                linkName = ref.targetNode.nodeGroup.name;
+
+            if (groupedLinks[linkName] == null)
+                groupedLinks[linkName] = [];
+
+            groupedLinks[linkName].push(ref.targetNode.label());
         });
 
         // Show node links
-        var linkNames = Object.keys(node.links);
+        var linkNames = Object.keys(groupedLinks);
         $.each(linkNames, function(i, linkName) {
-            var targetNames = "";
-            $.each(node.links[linkName], function(i, targetIndex) {
-                if (targetNames != "")
-                    targetNames = targetNames + ", ";
-                targetNames = targetNames + nodes[targetIndex].label;
-            });
-            addProperty(linkName, targetNames);
+            addProperty(linkName, groupedLinks[linkName].join(", "));
         });
 
         function addProperty(name, value) {
