@@ -71,6 +71,8 @@
             var graphModule = require("./graph");
             d3sheet.graph = graphModule(d3sheet.model);
 
+            console.log(d3sheet.graph);
+
             // Create D3 force layout from graph
             var forceModule = require("./force");
             var force = forceModule(d3sheet.graph, d3sheet.svgContainerId, d3sheet.svg, info, spreadsheet.settings);
@@ -80,7 +82,7 @@
 //            viewModule(d3sheet.model, force.updateGraph);
 
             // Apply CSS style
-            applyCss(spreadsheet.settings.css);
+            applyCss(d3sheet.model.settings.css);
         });
     }
 

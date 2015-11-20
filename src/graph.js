@@ -1,11 +1,8 @@
 module.exports = function(model) {
-    var graph = {
-        nodes: [],
-        links: []
-    };
+    var graph = new Graph();
 
     // For all sheets
-    $.each(model.sheets, function(i, sheet) {
+    $.each(model.nodeGroups, function(i, sheet) {
         // For all nodes
         $.each(sheet.nodes, function(j, node) {
             // Add node to graph
@@ -17,11 +14,11 @@ module.exports = function(model) {
     });
 
     // Create links
-    $.each(model.sheets, function(i, sheet) {
+    $.each(model.nodeGroups, function(i, sheet) {
         // For all nodes
         $.each(sheet.nodes, function(j, node) {
-            // For all linked sheets
-            $.each(sheet.linkedSheets, function(k, linkedSheet) {
+            // For all linked nodeGroups
+            $.each(sheet.linkedNodeGroups, function(k, linkedSheet) {
                 if (node.links[linkedSheet.name] == null)
                     return;
 
@@ -30,7 +27,7 @@ module.exports = function(model) {
                 $.each(node.links[linkedSheet.name], function(l, targetIndex) {
                     var link = {
                         source: node.graphIndex,
-                        target: model.sheets[linkedSheet.name].nodes[targetIndex].graphIndex,
+                        target: model.nodeGroups[linkedSheet.name].nodes[targetIndex].graphIndex,
                         label: linkedSheet.label
                     };
                     graphTargetIndexes.push(link.target);
@@ -44,4 +41,10 @@ module.exports = function(model) {
     });
 
     return graph;
+}
+
+function Graph() {
+    this.nodes = [];
+    this.links = [];
+    return this;
 }
