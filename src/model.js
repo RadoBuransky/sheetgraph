@@ -27,26 +27,35 @@ module.exports = function(spreadsheet) {
 
         // TODO: Create links from link sheets
 
-        function createLinks(sheets, nodeSheet, nodeGroupName) {
-            var source = nodeGroups[nodeGroupName];
+        function createLinks(nodeGroups, nodeSheet, nodeGroupName) {
+            var nodeGroup = nodeGroups[nodeGroupName];
+            var colNames = nodeSheet.header();
 
             // For all sheet rows
             $.each(nodeSheet.rows, function(i, row) {
+                if (i == 0)
+                    return;
+
                 // For all sheet columns
-                var colNames = Object.keys(row);
                 $.each(colNames, function(j, colName) {
+                    var value = nodeSheet.value(row, colName);
+                    if (value == null)
+                        return;
+
                     // If this is a link column
-                    var linkTarget = parseColumnLinkName(colName, sheets);
+                    var linkTarget = parseColumnLinkName(colName, nodeGroups);
                     if (linkTarget != null) {
                         // Find index of the target node
-                        $.each(sheets[linkTarget.sheetName].nodes, function(k, targetNode) {
+                        $.each(nodeGroups[linkTarget.sheetName].nodes, function(k, targetNode) {
                             // If target node property value matches
-                            if (row[colName].indexOf(targetNode.properties[linkTarget.propertyName]) > -1) {
-                                if (source.nodes[i].links[linkTarget.sheetName] == null)
-                                    source.nodes[i].links[linkTarget.sheetName] = [];
+                            // TODO: We should properly split values using comma
+                            if (value.indexOf(targetNode.value(linkTarget.propertyName)) > -1) {
+                                var links = nodeGroup.nodes[i - 1].links;
+                                if (links[linkTarget.sheetName] == null)
+                                    links[linkTarget.sheetName] = [];
 
-                                // Add index of the target node to the source node
-                                source.nodes[i].links[linkTarget.sheetName].push(k);
+                                // Add index of the target node to the nodeGroup node
+                                links[linkTarget.sheetName].push(k);
                             }
                         });
                     }
@@ -160,43 +169,54 @@ module.exports = function(spreadsheet) {
         return null;
     }
 
-    function Model() {
-        this.nodeGroups = {};
-        this.settings = {};
-        return this;
-    }
-
-    function NodeGroups() {
-        return this;
-    }
-
-    function NodeGroup(name, label) {
-        this.name = name;
-        this.label = label;
-        this.propertyNames = [];
-        this.linkedNodeGroups = [];
-        this.nodes = [];
-        return this;
-    }
-
-    function LinkedNodeGroup(name, label) {
-        this.name = name;
-        this.label = label;
-        return this;
-    }
-
-    function Node(properties) {
-        this.properties = properties;
-        this.links = {};
-        return this;
-    }
-
-    function NodeProperty(name, value) {
-        this.name = name;
-        this.value = value;
-        return this;
-    }
-
     console.log(model);
     return model;
+}
+
+function Model() {
+    this.nodeGroups = {};
+    this.settings = {};
+    return this;
+}
+
+function NodeGroups() {
+    return this;
+}
+
+function NodeGroup(name, label) {
+    this.name = name;
+    this.label = label;
+    this.propertyNames = [];
+    this.linkedNodeGroups = [];
+    this.nodes = [];
+    return this;
+}
+
+function LinkedNodeGroup(name, label) {
+    this.name = name;
+    this.label = label;
+    return this;
+}
+
+function Node(properties) {
+    this.properties = properties;
+    this.links = {};
+    return this;
+}
+
+Node.prototype.value = function(propertyName) {
+    var result = null;
+    $.each(this.properties, function(i, property) {
+        if (property.name == propertyName) {
+            result = property.value;
+            return false;
+        }
+    });
+    return result;
+}
+
+function NodeProperty(name, value) {
+    this.name = name;
+    this.value = value;
+    return this;
 }

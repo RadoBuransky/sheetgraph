@@ -116,6 +116,22 @@ module.exports = function(spreadsheetKey, onLoaded) {
         return this.rows[0].values();
     }
 
+    Sheet.prototype.value = function(row, colName) {
+        var colIndex = this.header().indexOf(colName);
+        if (colIndex == -1)
+            return null;
+
+        var result = null;
+        $.each(row.rowCells, function(i, rowCell) {
+            if (rowCell.colIndex == colIndex) {
+                result = rowCell.value;
+                return false;
+            }
+        });
+
+        return result;
+    }
+
     function Row(rowIndex) {
         this.rowIndex = rowIndex;
         this.rowCells = [];
