@@ -13,9 +13,9 @@ module.exports = function(graph, svgContainerId, svg, info) {
 
     var force = d3.layout.force()
         .size([width, height])
-        .linkDistance(30) // TODO: Move to settings
+        .linkDistance(170) // TODO: Move to settings
         .charge(-5000) // TODO: Move to settings
-        .gravity(0.5) // TODO: Move to settings
+        .gravity(0.3) // TODO: Move to settings
         .nodes(graph.nodes)
         .links(graph.links)
         .on("tick", onTick);
