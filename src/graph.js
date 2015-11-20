@@ -2,23 +2,21 @@ module.exports = function(model) {
     var graph = new Graph();
 
     // For all sheets
-    $.each(model.nodeGroups, function(i, sheet) {
+    $.each(model.nodeGroups, function(i, nodeGroup) {
         // For all nodes
-        $.each(sheet.nodes, function(j, node) {
+        $.each(nodeGroup.nodes, function(j, node) {
             // Add node to graph
-            node.graphIndex = graph.nodes.push(node) - 1;
-            node.labelProperty = sheet.label;
-            node.label = node.properties[node.labelProperty];
-            node.sheetName = sheet.name;
+            var graphNode = new GraphNode(node, nodeGroup.label, nodeGroup.name);
+            graph.nodes.push(graphNode);
         });
     });
 
     // Create links
-    $.each(model.nodeGroups, function(i, sheet) {
+    $.each(model.nodeGroups, function(i, nodeGroup) {
         // For all nodes
-        $.each(sheet.nodes, function(j, node) {
+        $.each(nodeGroup.nodes, function(j, node) {
             // For all linked nodeGroups
-            $.each(sheet.linkedNodeGroups, function(k, linkedSheet) {
+            $.each(nodeGroup.linkedNodeGroups, function(k, linkedSheet) {
                 if (node.links[linkedSheet.name] == null)
                     return;
 
@@ -46,5 +44,13 @@ module.exports = function(model) {
 function Graph() {
     this.nodes = [];
     this.links = [];
+    return this;
+}
+
+function GraphNode(node, labelProperty, nodeGroupName) {
+    this.node = node;
+    this.labelProperty = labelProperty;
+    this.label = node.value(labelProperty);
+    this.nodeGroupName = nodeGroupName;
     return this;
 }
