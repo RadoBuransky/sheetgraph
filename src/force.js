@@ -29,12 +29,13 @@ module.exports = function(graph, svgContainerId, svg, info) {
             .append("line")
             .attr("class", "link");
 
-//        svg.selectAll(".link-label").data(graph.links)
-//            .enter()
-//            .append("text")
-//            .text(linkText)
-//            .attr("class", "link-label")
-//            .attr("text-anchor", "middle");
+        svg.selectAll(".link-label")
+            .data(graph.links)
+            .enter()
+            .append("text")
+            .text(function(graphLink) { return graphLink.label; })
+            .attr("class", "link-label")
+            .attr("text-anchor", "middle");
 
         svg.selectAll(".node")
             .data(graph.nodes)
@@ -55,7 +56,7 @@ module.exports = function(graph, svgContainerId, svg, info) {
             .attr("class", "node-label")
             .attr("dy", ".35em")
             .attr("text-anchor", "middle")
-            .text(function(n) { return n.label; })
+            .text(function(graphNode) { return graphNode.node.label(); })
             .call(force.drag)
             .on("click", nodeClick);
 

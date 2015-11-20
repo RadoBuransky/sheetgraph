@@ -59,7 +59,7 @@ module.exports = function(spreadsheet) {
             $.each(nodeSheet.rows, function(i, row) {
                 if (i == 0)
                     return;
-                result.nodes.push(new Node(getNodeProperties(row, header)));
+                result.nodes.push(new Node(getNodeProperties(row, header), result));
             });
 
             return result;
@@ -158,9 +158,10 @@ function NodeGroup(name, labelPropertyName) {
     return this;
 }
 
-function Node(properties) {
+function Node(properties, nodeGroup) {
     this.properties = properties;
     this.refs = [];
+    this.nodeGroup = nodeGroup;
     return this;
 }
 
@@ -179,6 +180,10 @@ Node.prototype.value = function(propertyName) {
         }
     });
     return result;
+}
+
+Node.prototype.label = function() {
+    return this.value(this.nodeGroup.labelPropertyName);
 }
 
 function NodeProperty(name, value) {
