@@ -13,19 +13,19 @@ module.exports = function(spreadsheet) {
             nodeGroups[nodeGroupName] = getNodes(spreadsheet.sheets[nodeGroupName], nodeGroupName);
         });
 
-        // Create link names
+        // Create reference names
         $.each(nodeGroupNames, function(i, nodeGroupName) {
-            createLinkNames(nodeGroups, spreadsheet.sheets[nodeGroupName], nodeGroupName);
+            createRefNames(nodeGroups, spreadsheet.sheets[nodeGroupName], nodeGroupName);
         });
 
-        // Create links from node sheets
+        // Create references from node sheets
         $.each(nodeGroupNames, function(i, nodeGroupName) {
-            createLinks(nodeGroups, spreadsheet.sheets[nodeGroupName], nodeGroupName);
+            createRefs(nodeGroups, spreadsheet.sheets[nodeGroupName], nodeGroupName);
         });
 
-        // TODO: Create links from link sheets
+        // TODO: Create references from reference sheets
 
-        function createLinks(nodeGroups, nodeSheet, nodeGroupName) {
+        function createRefs(nodeGroups, nodeSheet, nodeGroupName) {
             var nodeGroup = nodeGroups[nodeGroupName];
             var colNames = nodeSheet.header();
 
@@ -40,20 +40,20 @@ module.exports = function(spreadsheet) {
                     if (value == null)
                         return;
 
-                    // If this is a link column
-                    var linkTarget = parseColumnLinkName(colName, nodeGroups);
-                    if (linkTarget != null) {
+                    // If this is a reference column
+                    var refTarget = parseColumnRefName(colName, nodeGroups);
+                    if (refTarget != null) {
                         // Find index of the target node
-                        $.each(nodeGroups[linkTarget.sheetName].nodes, function(k, targetNode) {
+                        $.each(nodeGroups[refTarget.sheetName].nodes, function(k, targetNode) {
                             // If target node property value matches
                             // TODO: We should properly split values using comma
-                            if (value.indexOf(targetNode.value(linkTarget.propertyName)) > -1) {
-                                var links = nodeGroup.nodes[i - 1].links;
-                                if (links[linkTarget.sheetName] == null)
-                                    links[linkTarget.sheetName] = [];
+                            if (value.indexOf(targetNode.value(refTarget.propertyName)) > -1) {
+                                var refs = nodeGroup.nodes[i - 1].refs;
+                                if (refs[refTarget.sheetName] == null)
+                                    refs[refTarget.sheetName] = [];
 
                                 // Add index of the target node to the nodeGroup node
-                                links[linkTarget.sheetName].push(k);
+                                refs[refTarget.sheetName].push(k);
                             }
                         });
                     }
@@ -61,14 +61,14 @@ module.exports = function(spreadsheet) {
             });
         }
 
-        function createLinkNames(sheets, nodeSheet, nodeGroupName) {
+        function createRefNames(sheets, nodeSheet, nodeGroupName) {
             var source = sheets[nodeGroupName];
 
-            // Get link names
+            // Get ref names
             $.each(nodeSheet.header(), function(i, propertyName) {
-                var linkTarget = parseColumnLinkName(propertyName, sheets);
-                if (linkTarget != null)
-                    source.linkedNodeGroups.push(new LinkedNodeGroup(linkTarget.sheetName, linkTarget.label));
+                var refTarget = parseColumnRefName(propertyName, sheets);
+                if (refTarget != null)
+                    source.refdNodeGroups.push(new RefdNodeGroup(refTarget.sheetName, refTarget.label));
             });
         }
 
@@ -85,8 +85,8 @@ module.exports = function(spreadsheet) {
 
             // Get property names
             $.each(header, function(i, colName) {
-                var linkTarget = colName.split(".");
-                if (linkTarget.length == 1)
+                var refTarget = colName.split(".");
+                if (refTarget.length == 1)
                     result.propertyNames.push(colName);
             });
 
@@ -109,7 +109,7 @@ module.exports = function(spreadsheet) {
     function getNodeGroupTypes(spreadsheet) {
         var nodeGroupTypes = {
             nodeGroupNames: [],
-            linkSheetNames: [],
+            refSheetNames: [],
             settingsGroupName: null
         };
         var sheetNames = Object.keys(spreadsheet.sheets);
@@ -122,11 +122,11 @@ module.exports = function(spreadsheet) {
             if (sheetName.slice(0, 1) == "#")
                 return;
 
-            var linkSheet = parseLinkSheetName(sheetName)
-            if ((linkSheet != null) &&
-                (sheetNames.indexOf(linkSheet.source) > -1) &&
-                (sheetNames.indexOf(linkSheet.target) > -1)) {
-                nodeGroupTypes.linkSheetNames.push(sheetName)
+            var refSheet = parseRefSheetName(sheetName)
+            if ((refSheet != null) &&
+                (sheetNames.indexOf(refSheet.source) > -1) &&
+                (sheetNames.indexOf(refSheet.target) > -1)) {
+                nodeGroupTypes.refSheetNames.push(sheetName)
                 return;
             }
 
@@ -136,18 +136,18 @@ module.exports = function(spreadsheet) {
         return nodeGroupTypes;
     }
 
-    function parseColumnLinkName(colName, sheets) {
-        var linkNames = colName.split(".");
-        if ((linkNames.length >= 2) &&
-            (sheets[linkNames[0]] != null) &&
-            (sheets[linkNames[0]].propertyNames.indexOf(linkNames[1]) > -1)) {
+    function parseColumnRefName(colName, sheets) {
+        var refNames = colName.split(".");
+        if ((refNames.length >= 2) &&
+            (sheets[refNames[0]] != null) &&
+            (sheets[refNames[0]].propertyNames.indexOf(refNames[1]) > -1)) {
             var result = {
-                sheetName: linkNames[0],
-                propertyName: linkNames[1]
+                sheetName: refNames[0],
+                propertyName: refNames[1]
             }
 
-            if (linkNames.length == 3)
-                result.label = linkNames[2];
+            if (refNames.length == 3)
+                result.label = refNames[2];
 
             return result;
         }
@@ -155,7 +155,7 @@ module.exports = function(spreadsheet) {
         return null;
     }
 
-    function parseLinkSheetName(sheetName) {
+    function parseRefSheetName(sheetName) {
         var nodeNames = sheetName.split("-");
         if (nodeNames.length == 2) {
             return {
@@ -184,12 +184,12 @@ function NodeGroup(name, label) {
     this.name = name;
     this.label = label;
     this.propertyNames = [];
-    this.linkedNodeGroups = [];
+    this.refdNodeGroups = [];
     this.nodes = [];
     return this;
 }
 
-function LinkedNodeGroup(name, label) {
+function RefdNodeGroup(name, label) {
     this.name = name;
     this.label = label;
     return this;
@@ -197,7 +197,7 @@ function LinkedNodeGroup(name, label) {
 
 function Node(properties) {
     this.properties = properties;
-    this.links = {};
+    this.refs = {};
     return this;
 }
 
