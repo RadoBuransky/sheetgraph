@@ -1,8 +1,7 @@
 module.exports = function(spreadsheet) {
-    var model = {
-        sheets: {},
-        settings: {}
-    };
+    var model = new Model();
+
+    console.log(spreadsheet);
 
     var sheetTypes = getSheetTypes(spreadsheet);
     model.sheets = getGraph(spreadsheet, sheetTypes.nodesSheetNames);
@@ -170,5 +169,12 @@ module.exports = function(spreadsheet) {
         return null;
     }
 
+    function Model() {
+        this.sheets = {};
+        this.settings = {};
+        return this;
+    }
+
+    console.log(model);
     return model;
 }
