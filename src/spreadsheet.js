@@ -25,9 +25,14 @@ module.exports = function(spreadsheetKey, onLoaded) {
             $.each(response.feed.entry, function(i, e) {
                 var index = e.gs$cell.row - 1;
                 if (sheet.rows[index] == null) {
-                    sheet.rows[index] = new Row();
+                    sheet.rows[index] = new Row(index);
                 }
-                sheet.rows[index][e.gs$cell.col - 1] = e.content.$t;
+                sheet.rows[index].cols.push(new RowCell(e.gs$cell.col - 1, e.content.$t));
+            });
+
+            // Sort row cells by col index
+            $.each(sheet.rows, function(i, row) {
+                row.cols.sort(function(c1, c2) { return c1.colIndex - c2.colIndex; });
             });
         });
     }
@@ -107,7 +112,15 @@ module.exports = function(spreadsheetKey, onLoaded) {
         return this;
     }
 
-    function Row() {
+    function Row(rowIndex) {
+        this.rowIndex = rowIndex;
+        this.cols = [];
+        return this;
+    }
+
+    function RowCell(colIndex, value) {
+        this.colIndex = colIndex;
+        this.value = value;
         return this;
     }
 }
