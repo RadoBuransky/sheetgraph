@@ -194,9 +194,26 @@ Node.prototype.label = function() {
     return this.value(this.nodeGroup.labelPropertyName);
 }
 
+Node.prototype.heading = function() {
+    var result = "";
+    $.each(this.properties, function(i, property) {
+        if (property.isHeading) {
+            result = property.value;
+            return false;
+        }
+    });
+
+    if (result != "")
+        return result;
+
+    return this.label();
+}
+
 function NodeProperty(name, value) {
-    this.name = name;
+    this.name = name.replace("*", "").replace("#", "");
     this.value = value;
+    this.isHeading = (name.slice(0, 1) == "*");
+    this.isHidden = (name.slice(0, 1) == "#");
     return this;
 }
 

@@ -3,7 +3,7 @@ module.exports = function(infoContainerId, title) {
     $("#" + infoContainerId + " h1").text(title);
 
     this.showNode = function(node, fillColor) {
-        $("#d3sheet-node-info h2").text(node.label());
+        $("#d3sheet-node-info h2").text(node.heading());
         $("#d3sheet-node-info header").css("background-color", fillColor);
         $("#d3sheet-node-sheet-name").text(node.nodeGroup.name);
 
@@ -12,7 +12,7 @@ module.exports = function(infoContainerId, title) {
 
         // Show node properties
         $.each(node.properties, function(i, nodeProperty) {
-            if (nodeProperty.name != node.labelPropertyName)
+            if (!nodeProperty.isHidden)
                 addProperty(nodeProperty.name, nodeProperty.value);
         });
 
