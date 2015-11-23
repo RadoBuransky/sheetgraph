@@ -20,8 +20,27 @@ module.exports = function(graph, svgContainerId, svg, info) {
         .links(graph.links)
         .on("tick", onTick);
 
+    var drag = force.drag()
+        .origin(function(d) { return d; })
+        .on("dragstart", dragstarted)
+        .on("drag", dragged)
+        .on("dragend", dragended);
+
     this.restart = restart
     restart();
+
+    function dragstarted(d) {
+       d3.event.sourceEvent.stopPropagation();
+       d3.select(this).classed("dragging", true);
+    }
+
+    function dragged(d) {
+       d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+    }
+
+    function dragended(d) {
+       d3.select(this).classed("dragging", false);
+    }
 
     function restart() {
         svg.selectAll(".link")
@@ -44,8 +63,8 @@ module.exports = function(graph, svgContainerId, svg, info) {
             .append("circle")
             .attr("class", "node")
             .attr("r", 30) // TODO: Settings
-            .attr("x", 0)
-            .attr("y", 0)
+            .attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; })
             .attr("fill", nodeFillColor)
             .call(force.drag)
             .on("click", nodeClick);
@@ -92,9 +111,9 @@ module.exports = function(graph, svgContainerId, svg, info) {
             .attr("y", function(d) {
                 return (d.source.y + d.target.y)/2; });
 
-        node.attr("transform", function(d) {
-            return "translate(" + d.x + "," + d.y + ")";
-        });
+        node
+            .attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; });
 
         nodeLabel
             .attr("x", function(d) { return d.x; })

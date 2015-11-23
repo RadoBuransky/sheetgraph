@@ -29,20 +29,24 @@
             width = svgContainer.width(),
             height = svgContainer.height();
 
-        // Create SVG element
-        d3sheet.svg = d3.select("#" + svgContainerId)
+        var zoom = d3.behavior.zoom()
+            .on("zoom", rescale);
+
+        var svg = d3.select("#" + svgContainerId)
             .append("svg")
             .attr("width", "100%")
             .attr("height", "100%")
-            .attr("viewBox", "0 0 " + width + " " + height)
-            .call(d3.behavior.zoom().on("zoom", rescale))
-            .on("dblclick.zoom", null)
-            .attr("pointer-events", "all")
             .append("g")
-            .attr("width", "100%")
-            .attr("height", "100%");
+            .call(zoom);
 
-        // Create info panel
+        var rect = svg.append("rect")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .style("fill", "none")
+                    .style("pointer-events", "all");
+
+        d3sheet.svg = svg.append("g");
+
         d3.select("#" + infoContainerId)
             .append("div");
 
