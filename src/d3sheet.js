@@ -34,13 +34,28 @@
             .append("svg")
             .attr("width", "100%")
             .attr("height", "100%")
-            .attr('viewBox', "0 0 " + width + " " + height);
+            .attr("viewBox", "0 0 " + width + " " + height)
+            .call(d3.behavior.zoom().on("zoom", rescale))
+            .on("dblclick.zoom", null)
+            .attr("pointer-events", "all")
+            .append("g")
+            .attr("width", "100%")
+            .attr("height", "100%");
 
         // Create info panel
         d3.select("#" + infoContainerId)
             .append("div");
 
         return d3sheet;
+    }
+
+    function rescale() {
+      var trans = d3.event.translate;
+      var scale = d3.event.scale;
+
+      d3sheet.svg.attr("transform",
+          "translate(" + trans + ")"
+          + " scale(" + scale + ")");
     }
 
     /**
@@ -78,12 +93,12 @@
             var force = forceModule(d3sheet.graph, d3sheet.svgContainerId, d3sheet.svg, info, spreadsheet.settings);
 
             // Initialize view options
-            var viewModule = require("./view");
-            viewModule(d3sheet.model, updateGraph);
-
-            function updateGraph(viewOptions) {
-                // TODO: update d3sheet.graph and force.restart()
-            }
+//            var viewModule = require("./view");
+//            viewModule(d3sheet.model, updateGraph);
+//
+//            function updateGraph(viewOptions) {
+//                // TODO: update d3sheet.graph and force.restart()
+//            }
 
             // Apply CSS style
             applyCss(d3sheet.model.settings.css);
