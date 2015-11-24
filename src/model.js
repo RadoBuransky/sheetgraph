@@ -61,11 +61,17 @@ module.exports = function(spreadsheet) {
                 var target = getRefToNodeGroup(nodeGroups, refSheet, row, refSheetName.target);
                 if ((source != null) &&
                     (target != null)) {
-                    console.log(source, target);
+                    var label = target.label;
+                    if ((target.label == null) ||
+                        (target.label == "") &&
+                        (row.rowCells[0].colIndex == 0)) {
+                            label = row.rowCells[0].value;
+                        }
 
                     $.each(source.nodes, function(j, sourceRef) {
                         $.each(target.nodes, function(k, targetRef) {
-                            sourceRef.targetNode.refs.push(new Ref(targetRef.targetNode, target.label));
+
+                            sourceRef.targetNode.refs.push(new Ref(targetRef.targetNode, label));
                         });
                     });
                 }
