@@ -57,6 +57,6 @@ html, body {
 }
 
 .link {
-    stroke: gray;
+    stroke: #333333;
     stroke-width: 1px;
 }

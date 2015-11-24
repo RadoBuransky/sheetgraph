@@ -62,7 +62,7 @@ module.exports = function(graph, svgContainerId, svg, info, settings) {
             .enter()
             .append("circle")
             .attr("class", nodeClass)
-            .attr("r", 30) // TODO: Settings
+            .attr("r", 20) // TODO: Settings
             .attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; })
             .attr("fill", nodeFillColor)

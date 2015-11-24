@@ -19,9 +19,7 @@ module.exports = function(infoContainerId, title) {
         // Group node links
         var groupedLinks = {};
         $.each(node.refs, function(i, ref) {
-            var linkName = ref.label;
-            if (linkName == null)
-                linkName = ref.targetNode.nodeGroup.name;
+            var linkName = ref.targetNode.nodeGroup.name;
 
             if (groupedLinks[linkName] == null)
                 groupedLinks[linkName] = [];
