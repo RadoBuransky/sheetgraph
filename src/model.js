@@ -62,15 +62,14 @@ module.exports = function(spreadsheet) {
                 if ((source != null) &&
                     (target != null)) {
                     var label = target.label;
-                    if ((target.label == null) ||
-                        (target.label == "") &&
+                    if (((target.label == null) ||
+                        (target.label == "")) &&
                         (row.rowCells[0].colIndex == 0)) {
                             label = row.rowCells[0].value;
                         }
 
                     $.each(source.nodes, function(j, sourceRef) {
                         $.each(target.nodes, function(k, targetRef) {
-
                             sourceRef.targetNode.refs.push(new Ref(targetRef.targetNode, label));
                         });
                     });
