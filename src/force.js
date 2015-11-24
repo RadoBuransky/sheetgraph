@@ -1,4 +1,4 @@
-module.exports = function(graph, svgContainerId, svg, info) {
+module.exports = function(graph, svgContainerId, svg, info, settings) {
     var node = [],
         nodeLabel = [],
         link = [],
@@ -61,7 +61,7 @@ module.exports = function(graph, svgContainerId, svg, info) {
             .data(graph.nodes)
             .enter()
             .append("circle")
-            .attr("class", "node")
+            .attr("class", nodeClass)
             .attr("r", 30) // TODO: Settings
             .attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; })
@@ -84,12 +84,16 @@ module.exports = function(graph, svgContainerId, svg, info) {
         force.start();
     }
 
+    function nodeClass(graphNode) {
+        return "node " + graphNode.node.nodeGroup.name;
+    }
+
     function nodeClick(graphNode) {
         info.showNode(graphNode.node, nodeFillColor(graphNode));
     }
 
     function nodeFillColor(graphNode) {
-        return colors(graphNode.node.nodeGroup.name);
+        return settings.css.get(graphNode.node.nodeGroup.name + ".fill", colors(graphNode.node.nodeGroup.name));
     }
 
     function selectAll() {

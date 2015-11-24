@@ -94,7 +94,7 @@
 
             // Create D3 force layout from graph
             var forceModule = require("./force");
-            var force = forceModule(d3sheet.graph, d3sheet.svgContainerId, d3sheet.svg, info, spreadsheet.settings);
+            var force = forceModule(d3sheet.graph, d3sheet.svgContainerId, d3sheet.svg, info, d3sheet.model.settings);
 
             // Initialize view options
 //            var viewModule = require("./view");

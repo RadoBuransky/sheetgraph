@@ -23,7 +23,7 @@ module.exports = function(spreadsheet) {
                     if (j == path.length - 1)
                         current[k] = value;
                     else
-                        current[k] = {};
+                        current[k] = new Settings();
                 }
                 current = current[k];
             });
@@ -254,6 +254,14 @@ function Settings() {
 }
 
 Settings.prototype.get = function(key, defaultValue) {
+    var parts = key.split(".");
+    if (parts.length > 1) {
+        if (this[parts[0]] == null)
+            return defaultValue;
+
+        return this[parts[0]].get(parts.splice(1, parts.length - 1).join("."), defaultValue);
+    }
+
     if (this[key] == null)
         return defaultValue;
 
