@@ -49,7 +49,8 @@ module.exports = function(graph, svgContainerId, svg, info, settings) {
             .enter()
             .append("path")
             .attr("class", "link")
-            .attr("marker-end", "url(#suit)");
+            .attr("marker-end", linkMarkerEnd)
+            .attr("marker-start", linkMarkerStart);
 
         svg.selectAll(".link-label")
             .data(graph.links)
@@ -84,6 +85,20 @@ module.exports = function(graph, svgContainerId, svg, info, settings) {
 
         selectAll();
         force.start();
+    }
+
+    function linkMarkerEnd(graphLink) {
+        if (graphLink.toTarget)
+            return "url(#markerEnd)";
+
+        return "none";
+    }
+
+    function linkMarkerStart(graphLink) {
+        if (graphLink.toSource)
+            return "url(#markerStart)";
+
+        return "none";
     }
 
     function nodeClass(graphNode) {

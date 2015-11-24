@@ -95,7 +95,7 @@ module.exports = function(spreadsheet) {
                     $.each(refTarget.nodeGroup.nodes, function(k, targetNode) {
                         // If target node property value matches
                         if (value.indexOf(targetNode.value(refTarget.propertyName)) > -1) {
-                            result.nodes.push(new Ref(targetNode, refTarget.label));
+                            result.nodes.push(new Ref(targetNode, refTarget.label, refTarget.toTarget,refTarget.toSource));
                         }
                     });
 
@@ -127,7 +127,7 @@ module.exports = function(spreadsheet) {
                             // If target node property value matches
                             // TODO: We should properly split values using comma
                             if (value.indexOf(targetNode.value(refTarget.propertyName)) > -1) {
-                                nodeGroup.nodes[i - 1].refs.push(new Ref(targetNode, refTarget.label));
+                                nodeGroup.nodes[i - 1].refs.push(new Ref(targetNode, refTarget.label, refTarget.toTarget, refTarget.toSource));
                             }
                         });
                     }
@@ -193,7 +193,9 @@ module.exports = function(spreadsheet) {
     }
 
     function parseColumnRefName(colName, nodeGroups) {
-        var refNames = colName.split(".");
+        var toTarget = (colName.slice(0, 2) == "->");
+        var toSource = (colName.slice(0, 2) == "<-");
+        var refNames = colName.replace("->", "").replace("<-", "").split(".");
         var nodeGroup = null;
         if (refNames.length > 0)
             nodeGroup = nodeGroups.getByName(refNames[0]);
@@ -201,7 +203,9 @@ module.exports = function(spreadsheet) {
             (nodeGroup != null)) {
             var result = {
                 nodeGroup: nodeGroup,
-                propertyName: refNames[1]
+                propertyName: refNames[1],
+                toTarget: toTarget,
+                toSource: toSource
             }
 
             if (refNames.length == 3)
@@ -303,9 +307,11 @@ function NodeProperty(name, value) {
     return this;
 }
 
-function Ref(targetNode, label) {
+function Ref(targetNode, label, toTarget, toSource) {
     this.targetNode = targetNode;
     this.label = label;
+    this.toTarget = toTarget;
+    this.toSource = toSource;
     return this;
 }
 

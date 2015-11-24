@@ -37,12 +37,11 @@
             .attr("width", "100%")
             .attr("height", "100%");
 
-        svg.append("defs").selectAll("marker")
-            .data(["suit"])
-            .enter()
-            .append("marker")
+        var defs = svg.append("defs")
+
+        defs.append("marker")
             .attr("class", "link")
-            .attr("id", function(d) { return d; })
+            .attr("id", "markerEnd")
             .attr("viewBox", "0 0 30 20")
             .attr("refX", 58)
             .attr("refY", 10)
@@ -51,6 +50,18 @@
             .attr("orient", "auto")
             .append("path")
             .attr("d", "M 0 0 L 30 10 L 0 20");
+
+        defs.append("marker")
+            .attr("class", "link")
+            .attr("id", "markerStart")
+            .attr("viewBox", "0 0 30 20")
+            .attr("refX", -30)
+            .attr("refY", 10)
+            .attr("markerWidth", 20)
+            .attr("markerHeight", 30)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M 30 0 L 0 10 L 30 20");
 
         svg = svg.append("g")
             .call(zoom);

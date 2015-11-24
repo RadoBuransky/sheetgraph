@@ -14,7 +14,7 @@ module.exports = function(model) {
     // Create links
     $.each(graph.nodes, function(i, graphNode) {
         $.each(graphNode.node.refs, function(j, ref) {
-            graph.links.push(new GraphLink(graphNode, getGraphNode(ref.targetNode), ref.label));
+            graph.links.push(new GraphLink(graphNode, getGraphNode(ref.targetNode), ref.label, ref.toTarget, ref.toSource));
         });
     });
 
@@ -43,9 +43,11 @@ function GraphNode(node) {
     return this;
 }
 
-function GraphLink(source, target, label) {
+function GraphLink(source, target, label, toTarget, toSource) {
     this.source = source;
     this.target = target;
     this.label = label;
+    this.toSource = toSource;
+    this.toTarget = toTarget;
     return this;
 }
