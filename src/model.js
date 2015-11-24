@@ -2,7 +2,7 @@ module.exports = function(spreadsheet) {
     var model = new Model();
 
     var nodeGroupTypes = getNodeGroupTypes(spreadsheet);
-    model.nodeGroups = getNodeGroups(spreadsheet, nodeGroupTypes.nodeGroupNames);
+    model.nodeGroups = getNodeGroups(spreadsheet, nodeGroupTypes.nodeGroupNames, nodeGroupTypes.refSheetNames);
     if (nodeGroupTypes.settingsGroupName != null)
         model.settings = getSettings(spreadsheet.sheets[nodeGroupTypes.settingsGroupName]);
 
@@ -32,7 +32,7 @@ module.exports = function(spreadsheet) {
         return settings;
     }
 
-    function getNodeGroups(spreadsheet, nodeGroupNames) {
+    function getNodeGroups(spreadsheet, nodeGroupNames, refSheetNames) {
         // Create nodes with properties
         var nodeGroups = new NodeGroups();
         $.each(nodeGroupNames, function(i, nodeGroupName) {
@@ -44,7 +44,61 @@ module.exports = function(spreadsheet) {
             createRefs(nodeGroups, spreadsheet.sheets[nodeGroup.name], nodeGroup);
         });
 
-        // TODO: Create references from reference sheets
+        // Create references from reference sheets
+        $.each(refSheetNames, function(i, refSheetName) {
+            createSheetRefs(nodeGroups, spreadsheet.sheets[refSheetName.name], refSheetName);
+        });
+
+        function createSheetRefs(nodeGroups, refSheet, refSheetName) {
+            var colNames = refSheet.header();
+
+            // For all sheet rows
+            $.each(refSheet.rows, function(i, row) {
+                if (i == 0)
+                    return;
+
+                var source = getRefToNodeGroup(nodeGroups, refSheet, row, refSheetName.source);
+                var target = getRefToNodeGroup(nodeGroups, refSheet, row, refSheetName.target);
+                if ((source != null) &&
+                    (target != null)) {
+                    console.log(source, target);
+
+                    $.each(source.nodes, function(j, sourceRef) {
+                        $.each(target.nodes, function(k, targetRef) {
+                            sourceRef.targetNode.refs.push(new Ref(targetRef.targetNode, target.label));
+                        });
+                    });
+                }
+            });
+        }
+
+        function getRefToNodeGroup(nodeGroups, sheet, row, nodeGroupName) {
+            var result = null;
+            var colNames = sheet.header();
+            $.each(colNames, function(j, colName) {
+                var value = sheet.value(row, colName);
+                if (value == null)
+                    return;
+
+                var refTarget = parseColumnRefName(colName, nodeGroups);
+                if ((refTarget != null) &&
+                    (refTarget.nodeGroup.name == nodeGroupName)) {
+                    result = refTarget;
+                    result.nodes = [];
+
+                    // Find index of the target node
+                    $.each(refTarget.nodeGroup.nodes, function(k, targetNode) {
+                        // If target node property value matches
+                        if (value.indexOf(targetNode.value(refTarget.propertyName)) > -1) {
+                            result.nodes.push(new Ref(targetNode, refTarget.label));
+                        }
+                    });
+
+                    return false;
+                }
+            });
+            return result;
+        }
 
         function createRefs(nodeGroups, nodeSheet, nodeGroup) {
             var colNames = nodeSheet.header();
@@ -123,7 +177,7 @@ module.exports = function(spreadsheet) {
             if ((refSheet != null) &&
                 (sheetNames.indexOf(refSheet.source) > -1) &&
                 (sheetNames.indexOf(refSheet.target) > -1)) {
-                nodeGroupTypes.refSheetNames.push(sheetName)
+                nodeGroupTypes.refSheetNames.push(refSheet);
                 return;
             }
 
@@ -158,6 +212,7 @@ module.exports = function(spreadsheet) {
         var nodeNames = sheetName.split("-");
         if (nodeNames.length == 2) {
             return {
+                name: sheetName,
                 source: nodeNames[0],
                 target: nodeNames[1]
             };
