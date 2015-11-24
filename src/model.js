@@ -4,7 +4,33 @@ module.exports = function(spreadsheet) {
     var nodeGroupTypes = getNodeGroupTypes(spreadsheet);
     model.nodeGroups = getNodeGroups(spreadsheet, nodeGroupTypes.nodeGroupNames);
     if (nodeGroupTypes.settingsGroupName != null)
-        model.settings = spreadsheet.sheets[nodeGroupTypes.settingsGroupName];
+        model.settings = getSettings(spreadsheet.sheets[nodeGroupTypes.settingsGroupName]);
+
+    function getSettings(settingsSheet) {
+        var settings = new Settings();
+
+        $.each(settingsSheet.rows, function(i, row) {
+            var key = row.rowCells[0].value,
+                value = row.rowCells[1].value;
+
+            if ((key == null) || (value == null))
+                return;
+
+            var path = key.split(".");
+            var current = settings;
+            $.each(path, function(j, k) {
+                if (current[k] == null) {
+                    if (j == path.length - 1)
+                        current[k] = value;
+                    else
+                        current[k] = {};
+                }
+                current = current[k];
+            });
+        });
+
+        return settings;
+    }
 
     function getNodeGroups(spreadsheet, nodeGroupNames) {
         // Create nodes with properties
@@ -221,4 +247,15 @@ function Ref(targetNode, label) {
     this.targetNode = targetNode;
     this.label = label;
     return this;
+}
+
+function Settings() {
+    return this;
+}
+
+Settings.prototype.get = function(key, defaultValue) {
+    if (this[key] == null)
+        return defaultValue;
+
+    return this[key];
 }

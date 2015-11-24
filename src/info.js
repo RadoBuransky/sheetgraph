@@ -26,7 +26,7 @@ module.exports = function(infoContainerId, title) {
             if (groupedLinks[linkName] == null)
                 groupedLinks[linkName] = [];
 
-            groupedLinks[linkName].push(ref.targetNode.label());
+            groupedLinks[linkName].push(ref.targetNode.heading());
         });
 
         // Show node links

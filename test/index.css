@@ -48,9 +48,8 @@ html, body {
 }
 
 .node {
-    stroke: gray;
     cursor: pointer;
-    stroke-width: 2px;
+    stroke-width: 1px;
 }
 
 .node-label {
@@ -59,5 +58,5 @@ html, body {
 
 .link {
     stroke: gray;
-    stroke-width: 2px;
+    stroke-width: 1px;
 }
