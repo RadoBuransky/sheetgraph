@@ -43,11 +43,13 @@ module.exports = function(graph, svgContainerId, svg, info, settings) {
     }
 
     function restart() {
+
         svg.selectAll(".link")
             .data(graph.links)
             .enter()
-            .append("line")
-            .attr("class", "link");
+            .append("path")
+            .attr("class", "link")
+            .attr("marker-end", "url(#suit)");
 
         svg.selectAll(".link-label")
             .data(graph.links)
@@ -104,10 +106,11 @@ module.exports = function(graph, svgContainerId, svg, info, settings) {
     }
 
     function onTick() {
-        link.attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
+//        link.attr("x1", function(d) { return d.source.x; })
+//            .attr("y1", function(d) { return d.source.y; })
+//            .attr("x2", function(d) { return d.target.x; })
+//            .attr("y2", function(d) { return d.target.y; });
+        link.attr("d", linkArc);
 
         linkLabel
             .attr("x", function(d) {
@@ -122,6 +125,12 @@ module.exports = function(graph, svgContainerId, svg, info, settings) {
         nodeLabel
             .attr("x", function(d) { return d.x; })
             .attr("y", function(d) { return d.y; });
+    }
+
+    function linkArc(d) {
+        var dx = d.target.x - d.source.x,
+            dy = d.target.y - d.source.y;
+        return "M" + d.source.x + " " + d.source.y + "L " + d.target.x + "," + d.target.y;
     }
 
     return this;
