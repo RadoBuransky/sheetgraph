@@ -1,11 +1,11 @@
-# d3sheet - visualize Google Spreadsheet as a D3 force graph
+# sheetgraph - visualize Google Spreadsheet as a D3 force graph
 
 Without writing any code:
  
 1. **Create a well-formed Google Spreadsheet**
 2. **Publish it so that it can be publicly accessed**. From the main menu in Google Spreadsheet choose **File** >
    **Publish to the web...**
-3. Use the spreadsheet's key to **visualize it as a graph** with nodes and links
+3. Use URL of the spreadsheet to **visualize it as a graph** with nodes and links
 
 Format of the spreadsheet is described later. But it's so self-explanatory that If you're too lazy to read, go ahead and
 check following examples to learn by them.
@@ -13,7 +13,12 @@ check following examples to learn by them.
 ## Example 1: movies and actors
 
 - [Google Spreadsheet](https://docs.google.com/spreadsheets/d/145TdEqd9nbnRFWWGUM-tdedulewUvZjRpHP7C09pIaQ/)
-- [Graph](http://radoburansky.github.io/d3sheet/demo/index.html?s=145TdEqd9nbnRFWWGUM-tdedulewUvZjRpHP7C09pIaQ)
+- [Graph](http://sheetgraph.com/?s=145TdEqd9nbnRFWWGUM-tdedulewUvZjRpHP7C09pIaQ)
+
+## Example 2: vesmír OPIS (Slovak language)
+
+- [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1TAVF5meqnFLqwNlttUj1cLEP4WmLzpO_DWyYCWudctM/)
+- [Graph](http://sheetgraph.com/?s=1TAVF5meqnFLqwNlttUj1cLEP4WmLzpO_DWyYCWudctM)
 
 ## Documentation
 
@@ -23,7 +28,7 @@ learn how to create sheets to create nodes in the graph and how to create links 
 ### Sheets
 
 To make it clear, sheet is a table. It contains rows and columns. A single spreadsheet can have more sheets. So
-spreadsheet is document and sheet is table. Right?
+spreadsheet is a document and sheet is a table within that document. Right?
 
 Every sheet has a name and the name matters. There are four types of sheets determined by their name:
 
@@ -39,7 +44,8 @@ create links. This is explained later.
 ### Node sheet
 
 Single row in a node sheet represents a node in the graph. The only exception is the first row which contains names of columns.
-**The first column** in a node sheet is used as a node label property. All other columns have one of two following meanings:
+**The first column** in a node sheet is used as a **node label** property. Node label is the text visible in front of the
+node in the graph. All other columns have one of two following meanings:
 
 1. **Node property** - use it for whatever you like
 2. **Link to another node** - column name determines which node property to use to create a link
@@ -55,42 +61,30 @@ you can use comma-separated list** of target property values. Note that you can 
 For example let's assume we have two node sheets `movie` and `actor`. To create a link from a movie to an actor using
 hers/his name, create a column named `actor.name` in the `movie` sheet.
 
+**To assign a label to a link** just add the label to the column name so that the resulting format is
+`<TARGET_SHEET_NAME>.<TARGET_NODE_PROPERTY_NAME>.<LINK_LABEL>`. If you want to give each link a different label you
+have to create a link sheet instead of a link column.
+
+**To hide column** from being displayed prefix it's name with a `#` symbol.
+
+**To display oriented arrow link** pointing towards the link target, prefix the column name with `->`. For opposite direction
+prefix the column name with `<-`.
+
 ### Link sheet
 
 Link sheet has a name in form `<SOURCE_SHEET_NAME>-<TARGET_SHEET_NAME>` where the first sheet name determines link source and the second
 sheet name is the target. For example a sheet named `movie-actor` contains links from nodes representing movies to nodes
 representing actors.
 
-The first row contains names of source and target property names in form `<SHEET_NAME>.<PROPERTY_NAME>`. **The first
-column** is link source and **the second column** is link target.
-
-**The optional third column** is used as link label if exists. You can also add more columns to store **other link
-properties**.
+It uses the same column rules as described for a node sheet. The first row contains column names. The first column is
+used as **link label**. Link label is a text visible in the middle of the link. The other two columns are used to link
+source nodes to target nodes.
 
 ### Settings sheet
 
 This optional sheet must be named `settings` and contains two columns where the first column contains setting key and
-the second column contains setting value. List of available settings follows.
+the second column contains setting value.
 
-| Setting key           | Description                                                                                |
-|-----------------------|--------------------------------------------------------------------------------------------|
-| title                 | Main title. By default it's the name of spreadsheet.                                       |
-| background-color      | CSS color used to paint background, for example #A011FF                                    |
-| color                 | CSS color used for text in general                                                         |
-
-### Style
-
-Most of the styling can be changed in the settings sheet with the exception of some node and link styles which can be
-set directly within node and link sheets.
- 
-#### Node fill and text colors
-
-**Background color and text color of the very first cell** (first row, first column) of a node sheet is used to paint
-nodes for the particular node sheet.   
-
-#### Link line and text colors
-
-There are two ways how to style links depending on how links are defined:
- 
-1. **Link sheet** - set background color and text color of the very first cell in the link sheet
-2. **Link column** - set background color and text color of the cell in the first row of that column
+Setting keys starting with `css` have special meaning and allow **styling using CSS**. These setting keys have format
+`css.<SELECTOR>.<CSS_PROPERTY>`. Where if `SELECTOR` starts with a `#` sign, then it is an identifier of a HTML element
+ otherwise it is a HTML class.
